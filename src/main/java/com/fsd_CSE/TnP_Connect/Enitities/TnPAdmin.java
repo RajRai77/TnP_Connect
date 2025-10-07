@@ -32,9 +32,9 @@ public class TnPAdmin {
 
     // --- Relationships ---
     // This admin can create many other items.
-    // We will uncomment these as we create the other entities.
-    // @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // private List<Internship> createdInternships;
+
+     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+     private List<Internship> createdInternships;
 
     // @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // private List<News> createdNews;
@@ -54,4 +54,12 @@ public class TnPAdmin {
     public void setDesignation(String designation) { this.designation = designation; }
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
+    //This getter will be used when we have to add new API
+    public List<Internship> getCreatedInternships() {
+        return createdInternships;
+    }
+    public void setCreatedInternships(List<Internship> createdInternships) {
+        this.createdInternships = createdInternships;
+    }
 }

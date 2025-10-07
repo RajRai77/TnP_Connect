@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -136,13 +137,13 @@ public class Student {
         this.createdAt = createdAt;
     }
 
-//    public java.util.List<InternshipApplication> getInternshipApplications() {
-//        return internshipApplications;
-//    }
-//
-//    public void setInternshipApplications(java.util.List<InternshipApplication> internshipApplications) {
-//        this.internshipApplications = internshipApplications;
-//    }
+    public java.util.List<InternshipApplication> getInternshipApplications() {
+        return internshipApplications;
+    }
+
+    public void setInternshipApplications(java.util.List<InternshipApplication> internshipApplications) {
+        this.internshipApplications = internshipApplications;
+    }
 //
 //    public java.util.List<SessionRegistration> getSessionRegistrations() {
 //        return sessionRegistrations;
@@ -153,11 +154,9 @@ public class Student {
 //    }
 
     // --- Relationships ---
-    // Note: Your IDE will show errors on the next two lines until we create those files.
-    // That is expected.
-//    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<InternshipApplication> internshipApplications;
-//
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InternshipApplication> internshipApplications;
+
 //    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<SessionRegistration> sessionRegistrations;
 }
