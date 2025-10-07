@@ -144,19 +144,19 @@ public class Student {
     public void setInternshipApplications(java.util.List<InternshipApplication> internshipApplications) {
         this.internshipApplications = internshipApplications;
     }
-//
-//    public java.util.List<SessionRegistration> getSessionRegistrations() {
-//        return sessionRegistrations;
-//    }
-//
-//    public void setSessionRegistrations(java.util.List<SessionRegistration> sessionRegistrations) {
-//        this.sessionRegistrations = sessionRegistrations;
-//    }
+
+    public java.util.List<SessionRegistration> getSessionRegistrations() {
+        return sessionRegistrations;
+    }
+
+    public void setSessionRegistrations(java.util.List<SessionRegistration> sessionRegistrations) {
+        this.sessionRegistrations = sessionRegistrations;
+    }
 
     // --- Relationships ---
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InternshipApplication> internshipApplications;
 
-//    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<SessionRegistration> sessionRegistrations;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SessionRegistration> sessionRegistrations;
 }

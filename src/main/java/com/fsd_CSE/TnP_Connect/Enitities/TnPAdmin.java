@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
+
 @Entity
 @Table(name = "tnp_admins")
 public class TnPAdmin {
@@ -31,13 +32,24 @@ public class TnPAdmin {
     private OffsetDateTime createdAt;
 
     // --- Relationships ---
-    // This admin can create many other items.
+    // This admin can create many items.
+    @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Internship> createdInternships;
 
-     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     private List<Internship> createdInternships;
+    @OneToMany(mappedBy = "postedByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Notification> createdNotifications;
 
-    // @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // private List<News> createdNews;
+    @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Resource> createdResources;
+
+    @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Session> createdSessions;
+
+    @OneToMany(mappedBy = "uploadedByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Notes> uploadedNotes;
+
+    @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<Contest> createdContests;
 
     // --- Manually Added Getters and Setters ---
     public Integer getId() { return id; }
@@ -56,10 +68,42 @@ public class TnPAdmin {
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 
     //This getter will be used when we have to add new API
-    public List<Internship> getCreatedInternships() {
+    //getter and setter for Relationships
+    public java.util.List<Internship> getCreatedInternships() {
         return createdInternships;
     }
-    public void setCreatedInternships(List<Internship> createdInternships) {
+    public void setCreatedInternships(java.util.List<Internship> createdInternships) {
         this.createdInternships = createdInternships;
     }
+    public java.util.List<Notification> getCreatedNotifications() {
+        return createdNotifications;
+    }
+    public void setCreatedNotifications(java.util.List<Notification> createdNotifications) {
+        this.createdNotifications = createdNotifications;
+    }
+    public java.util.List<Resource> getCreatedResources() {
+        return createdResources;
+    }
+    public void setCreatedResources(java.util.List<Resource> createdResources) {
+        this.createdResources = createdResources;
+    }
+    public java.util.List<Session> getCreatedSessions() {
+        return createdSessions;
+    }
+    public void setCreatedSessions(java.util.List<Session> createdSessions) {
+        this.createdSessions = createdSessions;
+    }
+    public java.util.List<Notes> getUploadedNotes() {
+        return uploadedNotes;
+    }
+    public void setUploadedNotes(java.util.List<Notes> uploadedNotes) {
+        this.uploadedNotes = uploadedNotes;
+    }
+    public java.util.List<Contest> getCreatedContests() {
+        return createdContests;
+    }
+    public void setCreatedContests(java.util.List<Contest> createdContests) {
+        this.createdContests = createdContests;
+    }
+
 }
