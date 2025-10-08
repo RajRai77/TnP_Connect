@@ -3,10 +3,8 @@ package com.fsd_CSE.TnP_Connect.DTO;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-
-// =====================================================================================
 // InternshipResponse.java (DTO for sending internship data back)
-// =====================================================================================
+
 public class InternshipResponse {
     private Integer id;
     private String role;

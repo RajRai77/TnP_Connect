@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// FILE 4: NoteController.java (API Endpoints)
-// =====================================================================================
+// NoteController.java (API Endpoints)
+
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {

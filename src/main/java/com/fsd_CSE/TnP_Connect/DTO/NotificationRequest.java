@@ -3,7 +3,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.LocalDate;
 
-// FILE 1: NotificationRequest.java (DTO for creating a notification)
+// NotificationRequest.java (DTO for creating a notification)
 // =====================================================================================
 public class NotificationRequest {
     private String title;

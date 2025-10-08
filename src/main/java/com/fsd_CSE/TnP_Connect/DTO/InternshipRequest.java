@@ -2,7 +2,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.LocalDate;
 
-// FILE 1: InternshipRequest.java (DTO for creating/updating an internship)
+// InternshipRequest.java (DTO for creating/updating an internship)
 public class InternshipRequest {
     private String role;
     private String company;

@@ -63,8 +63,7 @@ public class TnPAdminService {
         TnPAdmin admin = tnpAdminRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
-        // IMPORTANT: This is a simple string comparison for your evaluation.
-        // In a real app, you would use `passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())`.
+        // use `passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())`.
         String expectedPasswordHash = "HASHED_" + request.getPassword();
         if (!expectedPasswordHash.equals(admin.getPasswordHash())) {
             log.warn("Failed login attempt for email: {}", request.getEmail());

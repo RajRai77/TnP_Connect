@@ -2,7 +2,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.OffsetDateTime;
 
-// FILE 2: ResourceResponse.java (DTO for viewing a resource)
+// ResourceResponse.java (DTO for viewing a resource)
 // =====================================================================================
 public class ResourceResponse {
     private Integer id;

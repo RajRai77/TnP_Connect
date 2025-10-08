@@ -3,8 +3,8 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.OffsetDateTime;
 
-// FILE 1: ContestRequest.java (DTO for creating a contest)
-// =====================================================================================
+// ContestRequest.java (DTO for creating a contest)
+
 public class ContestRequest {
     private String title;
     private String platform;

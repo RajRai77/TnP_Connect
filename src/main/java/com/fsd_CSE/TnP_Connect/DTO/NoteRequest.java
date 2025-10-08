@@ -3,7 +3,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 public class NoteRequest {
 
 
-// FILE 1: NoteRequest.java (DTO for uploading a note)
+// NoteRequest.java (DTO for uploading a note)
 
     private String title;
     private String description;

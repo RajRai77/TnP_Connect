@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-// FILE 3: NotificationService.java (Business Logic)
-// =====================================================================================
+// NotificationService.java (Business Logic)
+
 @Service
 public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);

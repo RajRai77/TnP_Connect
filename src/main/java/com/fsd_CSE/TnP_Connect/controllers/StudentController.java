@@ -11,10 +11,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-// =====================================================================================
 //  StudentController.java (The API Endpoint Layer)
-//  This class exposes the URLs that the outside world can call.
-// =====================================================================================
+
 
 @RestController
 @RequestMapping("/api/students") // Base URL for all student-related APIs

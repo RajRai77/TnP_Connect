@@ -2,8 +2,8 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.OffsetDateTime;
 
-// FILE 2: ContestResponse.java (DTO for viewing a contest)
-// =====================================================================================
+// ContestResponse.java (DTO for viewing a contest)
+
 public class ContestResponse {
     private Integer id;
     private String title;

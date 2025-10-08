@@ -1,9 +1,9 @@
 package com.fsd_CSE.TnP_Connect.DTO;
 
 
-// =====================================================================================
-// FILE 5: InternshipApplicationRequest.java (DTO for applying)
-// =====================================================================================
+
+// InternshipApplicationRequest.java (DTO for applying)
+
 public class InternshipApplicationRequest {
     private Integer studentId;
     private Integer internshipId;

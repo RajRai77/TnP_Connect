@@ -18,7 +18,7 @@ public class Student {
     @Column(name = "student_id")
     private Integer id;
 
-    // We will clarify this field's purpose later
+    // Just to uniqely indentify student
     @Column(name = "tnp_roll_no")
     private String tnprollNo;
 

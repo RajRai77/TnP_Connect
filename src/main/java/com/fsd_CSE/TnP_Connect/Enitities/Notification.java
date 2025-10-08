@@ -30,7 +30,6 @@ public class Notification {
 
     @Column(name = "event_date")
     private LocalDate eventDate; // For deadlines or event dates
-
     private String category; // e.g., "Placement Drive", "Workshop"
 
     @CreationTimestamp

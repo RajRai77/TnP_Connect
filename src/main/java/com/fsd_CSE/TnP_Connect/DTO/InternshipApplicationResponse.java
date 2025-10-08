@@ -3,9 +3,9 @@ package com.fsd_CSE.TnP_Connect.DTO;
 import java.time.OffsetDateTime;
 
 
-// =====================================================================================
+
 // InternshipApplicationResponse.java (DTO for sending application data back)
-// =====================================================================================
+
 public class InternshipApplicationResponse {
     private Integer applicationId;
     private String status;

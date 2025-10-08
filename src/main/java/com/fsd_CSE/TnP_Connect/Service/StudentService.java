@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
 
-    // Requirement 2: Logger
+    //Logger
     private static final Logger log = LoggerFactory.getLogger(StudentService.class);
 
     @Autowired
@@ -84,7 +84,6 @@ public class StudentService {
         return convertToResponse(student);
     }
 
-    // --- NEW METHODS START HERE ---
     /**
      * Updates an existing student's information.
      * @param id The ID of the student to update.
@@ -150,7 +149,8 @@ public class StudentService {
         log.info("Searching students with branch: {} and minimum CGPA: {}", branch, cgpa);
         List<Student> allStudents = studentRepository.findAll();
 
-        // This is a simple in-memory filter. For large datasets, a repository query is better.
+        // This is a simple in-memory filter.
+        // In future for large datasets, a repository query is better.
         return allStudents.stream()
                 .filter(student -> branch == null || student.getBranch().equalsIgnoreCase(branch))
                 .filter(student -> cgpa == null || student.getCgpa().compareTo(cgpa) >= 0)

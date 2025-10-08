@@ -2,9 +2,9 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 public class LoginRequest {
 
-// =====================================================================================
+
 //  LoginRequest.java (DTO specifically for the login endpoint)
-// =====================================================================================
+
 
         private String email;
         private String password;

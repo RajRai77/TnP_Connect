@@ -11,7 +11,7 @@ import java.util.List;
 
 
 // ContestController.java (API Endpoints)
-// =====================================================================================
+
 @RestController
 @RequestMapping("/api/contests")
 class ContestController {

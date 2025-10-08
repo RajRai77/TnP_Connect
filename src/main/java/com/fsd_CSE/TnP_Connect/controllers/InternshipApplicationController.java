@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// =====================================================================================
+
 // InternshipApplicationController.java (API endpoint for applying)
-// =====================================================================================
+
 @RestController
 @RequestMapping("/api/applications")
 public class InternshipApplicationController {

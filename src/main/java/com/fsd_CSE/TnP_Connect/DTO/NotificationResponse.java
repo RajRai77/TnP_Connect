@@ -4,7 +4,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-// FILE 2: NotificationResponse.java (DTO for viewing a notification)
+// NotificationResponse.java (DTO for viewing a notification)
 // =====================================================================================
 public class NotificationResponse {
     private Integer id;

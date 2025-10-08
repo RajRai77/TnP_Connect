@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// =====================================================================================
 // InternshipController.java (API endpoints for internships)
-// =====================================================================================
+
 @RestController
 @RequestMapping("/api/internships")
 public class InternshipController {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // NotificationController.java (API Endpoints)
-// =====================================================================================
+
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationController {
