@@ -55,6 +55,15 @@ public class StudentController {
         return new ResponseEntity<>(updatedStudent, HttpStatus.OK);
     }
 
+    // Endpoint: PATCH /api/students/{id}
+    // Partially updates a student resource
+    @PatchMapping("/{id}")
+    public ResponseEntity<StudentResponse> patchStudent(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+        StudentResponse patchedStudent = studentService.patchStudent(id, updates);
+        return new ResponseEntity<>(patchedStudent, HttpStatus.OK);
+    }
+
+
     // Endpoint: DELETE /api/students/{id}
     // Deletes a student
     @DeleteMapping("/{id}")

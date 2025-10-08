@@ -3,6 +3,7 @@ package com.fsd_CSE.TnP_Connect.Service;
 import com.fsd_CSE.TnP_Connect.DTO.StudentRequest;
 import com.fsd_CSE.TnP_Connect.DTO.StudentResponse;
 import com.fsd_CSE.TnP_Connect.Enitities.Student;
+import com.fsd_CSE.TnP_Connect.ExceptionHandling.ResourceNotFoundException;
 import com.fsd_CSE.TnP_Connect.Repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,7 @@ public class StudentService {
     public StudentResponse updateStudent(Integer id, StudentRequest studentRequest) {
         log.info("Updating student with ID: {}", id);
         Student studentToUpdate = studentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
         // Update fields
         studentToUpdate.setName(studentRequest.getName());
@@ -111,6 +112,55 @@ public class StudentService {
 
         Student updatedStudent = studentRepository.save(studentToUpdate);
         log.info("Successfully updated student with ID: {}", id);
+        return convertToResponse(updatedStudent);
+    }
+
+    /**
+     * Partially updates an existing student's information. (PATCH)
+     * @param id The ID of the student to update.
+     * @param updates A map containing only the fields to be changed.
+     * @return The updated student's data.
+     */
+    public StudentResponse patchStudent(Integer id, Map<String, Object> updates) {
+        log.info("Partially updating (PATCH) student with ID: {}", id);
+        Student studentToPatch = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+
+        // Iterate through the fields provided in the request and update them
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "name":
+                    studentToPatch.setName((String) value);
+                    break;
+                case "email":
+                    studentToPatch.setEmail((String) value);
+                    break;
+                case "branch":
+                    studentToPatch.setBranch((String) value);
+                    break;
+                case "year":
+                    studentToPatch.setYear((Integer) value);
+                    break;
+                case "cgpa":
+                    // Handle numbers carefully
+                    if (value instanceof Double) {
+                        studentToPatch.setCgpa(BigDecimal.valueOf((Double) value));
+                    } else if (value instanceof Integer) {
+                        studentToPatch.setCgpa(BigDecimal.valueOf((Integer) value));
+                    }
+                    break;
+                case "skills":
+                    studentToPatch.setSkills((String) value);
+                    break;
+                case "profilePicUrl":
+                    studentToPatch.setProfilePicUrl((String) value);
+                    break;
+
+            }
+        });
+
+        Student updatedStudent = studentRepository.save(studentToPatch);
+        log.info("Successfully patched student with ID: {}", id);
         return convertToResponse(updatedStudent);
     }
 
