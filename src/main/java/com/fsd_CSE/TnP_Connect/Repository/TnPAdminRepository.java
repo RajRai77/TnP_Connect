@@ -11,5 +11,8 @@ public interface TnPAdminRepository extends JpaRepository<TnPAdmin, Integer> {
 
     // Custom query method to find an admin by their email address.
     Optional<TnPAdmin> findByEmail(String email);
-
+    //add custom queries later, for example:
+    // List<Internship> findByCompany(String company);
+    // List<Internship> findByStatus(String status);
 }
+

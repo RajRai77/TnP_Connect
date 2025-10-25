@@ -1,5 +1,6 @@
 package com.fsd_CSE.TnP_Connect.Enitities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,7 +19,6 @@ public class Student {
     @Column(name = "student_id")
     private Integer id;
 
-    // Just to uniqely indentify student
     @Column(name = "tnp_roll_no")
     private String tnprollNo;
 
@@ -31,10 +31,8 @@ public class Student {
     private String passwordHash;
 
     private String branch;
-
     private Integer year;
 
-    // Using BigDecimal for precision is better for CGPA
     @Column(precision = 3, scale = 2)
     private BigDecimal cgpa;
 
@@ -47,7 +45,15 @@ public class Student {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
-    // --- Manually Added Getters and Setters ---
+    // Relationships
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // Tells Swagger this is output-only
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InternshipApplication> internshipApplications;
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // Tells Swagger this is output-only
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SessionRegistration> sessionRegistrations;
 
     public Integer getId() {
         return id;
@@ -153,10 +159,5 @@ public class Student {
         this.sessionRegistrations = sessionRegistrations;
     }
 
-    // --- Relationships ---
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InternshipApplication> internshipApplications;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SessionRegistration> sessionRegistrations;
 }

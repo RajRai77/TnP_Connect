@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface SessionRegistrationRepository extends JpaRepository<SessionRegistration, Integer> {
     // This is a crucial method to prevent a student from registering for the same session twice
+
     Optional<SessionRegistration> findByStudentIdAndSessionId(Integer studentId, Integer sessionId);
 }
