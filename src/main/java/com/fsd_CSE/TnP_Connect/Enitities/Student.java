@@ -45,8 +45,8 @@ public class Student {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
-    // Relationships
 
+    // Relationships
     @Schema(accessMode = Schema.AccessMode.READ_ONLY) // Tells Swagger this is output-only
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InternshipApplication> internshipApplications;

@@ -16,10 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody; // Alias to avoid name clash
-
-
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,7 +37,6 @@ public class StudentController {
 
 
     // --- ENDPOINT 1: Create Student ---
-    // NOW uses the new simpleHash() method
     @PostMapping("/")
     public ResponseEntity<StudentResponse> createStudent(@org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
 
@@ -86,8 +81,6 @@ public class StudentController {
         return ResponseEntity.ok(convertToResponse(student));
     }
 
-    // --- All other endpoints (3-8) are unchanged ---
-    // ... (getAllStudents, updateStudent, patchStudent, deleteStudent, getStudentSkills, searchStudents) ...
 
     // --- ENDPOINT 3: Get All Students ---
     @GetMapping("/")
@@ -100,8 +93,7 @@ public class StudentController {
         return ResponseEntity.ok(studentResponses);
     }
 
-    // --- ENDPOINT 4: Update Student (Full Replace) ---
-    // NOW uses the StudentRequest DTO.
+    // --- ENDPOINT 4: Update Student  ---
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponse> updateStudent(@PathVariable Integer id, @org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
         log.info("Updating (PUT) student with ID: {}", id);
@@ -125,11 +117,38 @@ public class StudentController {
     }
 
     // --- ENDPOINT 5: Patch Student (Partial Update) ---
+    // --- UPDATED with @RequestBody annotation for Swagger ---
     @PatchMapping("/{id}")
-    public ResponseEntity<StudentResponse> patchStudent(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<StudentResponse> patchStudent(
+            @PathVariable Integer id,
+
+            // --- THIS IS THE FIX ---
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "JSON object with one or more fields to update.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(type = "object"),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Update Skills Example",
+                                            value = "{\"skills\": \"Java, Spring Boot, Python\"}"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Update CGPA Example",
+                                            value = "{\"cgpa\": 9.1}"
+                                    )
+                            }
+                    )
+            )
+            // --- END OF FIX ---
+            @org.springframework.web.bind.annotation.RequestBody Map<String, Object> updates) {
+
         log.info("Partially updating (PATCH) student with ID: {}", id);
+
         Student studentToPatch = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+
         updates.forEach((key, value) -> {
             switch (key) {
                 case "name": studentToPatch.setName((String) value); break;
@@ -146,6 +165,7 @@ public class StudentController {
         log.info("Successfully patched student with ID: {}", id);
         return ResponseEntity.ok(convertToResponse(updatedStudent));
     }
+    // --- END OF UPDATE ---
 
     // --- ENDPOINT 6: Delete Student ---
     @DeleteMapping("/{id}")
@@ -182,10 +202,6 @@ public class StudentController {
                 .collect(Collectors.toList()));
     }
 
-
-    // =================================================================================
-    // NEW RELATIONSHIP ENDPOINTS (As requested)
-    // =================================================================================
 
     // --- ENDPOINT 9: Get all applications for a specific student ---
     @GetMapping("/{id}/internship-applications")

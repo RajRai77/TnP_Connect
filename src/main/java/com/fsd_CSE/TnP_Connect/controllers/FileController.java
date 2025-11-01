@@ -25,7 +25,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Objects;
+
 import java.util.UUID;
+
 @RestController
 @RequestMapping("/api")
 public class FileController {
@@ -59,16 +61,15 @@ public class FileController {
     }
 
     // --- ENDPOINT 1: Upload File ---
-    @PostMapping("/upload/{subDirectory}")
+    @PostMapping(value = "/upload/{subDirectory}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadFile(
-            @RequestParam("file") MultipartFile file,
+            // We also change @RequestParam to @RequestPart for clarity
+            @RequestPart("file") MultipartFile file,
             @PathVariable String subDirectory) {
 
         log.info("Receiving file upload for directory: {}", subDirectory);
 
-        // Call the private helper method (logic from service)
         String fileUrl = storeFile(file, subDirectory);
-
         return ResponseEntity.ok(Map.of("url", fileUrl));
     }
 
@@ -110,24 +111,31 @@ public class FileController {
                 throw new FileStorageException("Failed to store empty file.");
             }
 
-            // 1. Sanitize and create a unique filename
+            // 1. Sanitize original filename
             String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-            String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
 
-            // 2. Resolve the target path
+            // --- THIS IS THE FIX ---
+            // Replace all spaces, colons, and other unsafe characters with underscores
+            String sanitizedFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\._-]", "_");
+            // --- END OF FIX ---
+
+            // 2. Create a unique filename
+            String uniqueFilename = UUID.randomUUID().toString() + "_" + sanitizedFilename;
+
+            // 3. Resolve the target path
             Path subDirPath = rootLocation.resolve(subDirectory).normalize();
             if (!subDirPath.startsWith(rootLocation)) {
                 throw new FileStorageException("Cannot store file outside current directory.");
             }
             Path targetLocation = subDirPath.resolve(uniqueFilename);
 
-            // 3. Save the file
+            // 4. Save the file
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 log.info("Stored file at: {}", targetLocation);
             }
 
-            // 4. Return the *URL* to access this file
+            // 5. Return the *URL* to access this file
             return ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/api/files/")
                     .path(subDirectory)
