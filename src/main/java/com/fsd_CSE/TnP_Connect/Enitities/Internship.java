@@ -42,7 +42,7 @@ public class Internship {
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InternshipApplication> applications;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getRole() { return role; }

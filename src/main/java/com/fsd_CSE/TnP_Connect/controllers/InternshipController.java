@@ -29,12 +29,9 @@ public class InternshipController {
     @Autowired private InternshipRepository internshipRepository;
     @Autowired private TnPAdminRepository tnpAdminRepository; // Needed for create logic
 
-    // --- LOGGER (Moved from Service) ---
     private static final Logger log = LoggerFactory.getLogger(InternshipController.class);
 
     // --- ENDPOINT 1: Create Internship ---
-    // NOW ACCEPTS THE Internship ENTITY
-    // Requires createdByAdminId in the JSON body
     @PostMapping("/")
     public ResponseEntity<InternshipResponse> createInternship(@RequestBody Internship requestInternship) {
 

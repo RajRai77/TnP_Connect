@@ -33,7 +33,7 @@ public class Student {
     private String branch;
     private Integer year;
 
-    @Column(precision = 3, scale = 2)
+    @Column(precision = 4, scale = 2)
     private BigDecimal cgpa;
 
     @Column(columnDefinition = "TEXT")

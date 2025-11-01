@@ -1,8 +1,5 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.InternshipApplicationSummary;
-import com.fsd_CSE.TnP_Connect.DTO.SessionRegistrationSummary;
-import com.fsd_CSE.TnP_Connect.DTO.StudentFullDetailsResponse;
-import com.fsd_CSE.TnP_Connect.DTO.StudentResponse;
+import com.fsd_CSE.TnP_Connect.DTO.*;
 import com.fsd_CSE.TnP_Connect.Enitities.InternshipApplication;
 import com.fsd_CSE.TnP_Connect.Enitities.SessionRegistration;
 import com.fsd_CSE.TnP_Connect.Enitities.Student;
@@ -29,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//  StudentController.java (The API Endpoint Layer)
+
 
 
 @RestController
-@RequestMapping("/api/students") // Base URL for all student-related APIs
+@RequestMapping("/api/students")
 public class StudentController {
 
 
@@ -46,32 +43,38 @@ public class StudentController {
     // --- ENDPOINT 1: Create Student ---
     // NOW uses the new simpleHash() method
     @PostMapping("/")
-    public ResponseEntity<StudentResponse> createStudent(@RequestBody Student requestStudent) {
-        log.info("Creating new student with email: {}", requestStudent.getEmail());
+    public ResponseEntity<StudentResponse> createStudent(@org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
 
-        if (studentRepository.findByEmail(requestStudent.getEmail()).isPresent()) {
+        log.info("Creating new student with email: {}", request.getEmail());
+
+        // 1. Validation Logic
+        if (studentRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already in use.");
         }
 
+        // 2. Business Logic
         Student newStudent = new Student();
-        newStudent.setName(requestStudent.getName());
-        newStudent.setEmail(requestStudent.getEmail());
-        newStudent.setBranch(requestStudent.getBranch());
-        newStudent.setYear(requestStudent.getYear());
-        newStudent.setCgpa(requestStudent.getCgpa());
-        newStudent.setSkills(requestStudent.getSkills());
-        newStudent.setProfilePicUrl(requestStudent.getProfilePicUrl());
-        newStudent.setTnprollNo(requestStudent.getTnprollNo());
+        newStudent.setName(request.getName()); // <-- Read from request
+        newStudent.setEmail(request.getEmail()); // <-- Read from request
+        newStudent.setBranch(request.getBranch()); // <-- Read from request
+        newStudent.setYear(request.getYear()); // <-- Read from request
+        newStudent.setCgpa(request.getCgpa()); // <-- Read from request
+        newStudent.setSkills(request.getSkills()); // <-- Read from request
+        newStudent.setProfilePicUrl(request.getProfilePicUrl()); // <-- Read from request
+        newStudent.setTnprollNo(request.getTnprollNo()); // <-- Add this if/when tnprollNo is in StudentRequest
 
-        // --- NEW HASHING LOGIC ---
-        // Assumes plain text password is sent in the 'passwordHash' field of the request
-        newStudent.setPasswordHash(simpleHash(requestStudent.getPasswordHash()));
+        // Hashing logic now reads from request.getPassword()
+        newStudent.setPasswordHash(simpleHash(request.getPassword())); // <-- CHANGED
 
+        // 3. Save to Database
         Student savedStudent = studentRepository.save(newStudent);
         log.info("Created new student with ID: {}", savedStudent.getId());
 
+        // 4. Convert to "Response" DTO and return
         return new ResponseEntity<>(convertToResponse(savedStudent), HttpStatus.CREATED);
     }
+
+
 
 
     // --- ENDPOINT 2: Get Student By ID (Simple) ---
@@ -98,19 +101,24 @@ public class StudentController {
     }
 
     // --- ENDPOINT 4: Update Student (Full Replace) ---
+    // NOW uses the StudentRequest DTO.
     @PutMapping("/{id}")
-    public ResponseEntity<StudentResponse> updateStudent(@PathVariable Integer id, @RequestBody Student requestStudent) {
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable Integer id, @org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
         log.info("Updating (PUT) student with ID: {}", id);
+
         Student studentToUpdate = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        studentToUpdate.setName(requestStudent.getName());
-        studentToUpdate.setEmail(requestStudent.getEmail());
-        studentToUpdate.setBranch(requestStudent.getBranch());
-        studentToUpdate.setYear(requestStudent.getYear());
-        studentToUpdate.setCgpa(requestStudent.getCgpa());
-        studentToUpdate.setSkills(requestStudent.getSkills());
-        studentToUpdate.setProfilePicUrl(requestStudent.getProfilePicUrl());
-        studentToUpdate.setTnprollNo(requestStudent.getTnprollNo());
+
+        // For PUT, we replace all fields from the request
+        studentToUpdate.setName(request.getName()); // <-- Read from request
+        studentToUpdate.setEmail(request.getEmail()); // <-- Read from request
+        studentToUpdate.setBranch(request.getBranch()); // <-- Read from request
+        studentToUpdate.setYear(request.getYear()); // <-- Read from request
+        studentToUpdate.setCgpa(request.getCgpa()); // <-- Read from request
+        studentToUpdate.setSkills(request.getSkills()); // <-- Read from request
+        studentToUpdate.setProfilePicUrl(request.getProfilePicUrl()); // <-- Read from request
+        // studentToUpdate.setTnprollNo(request.getTnprollNo()); // <-- Add this if/when tnprollNo is in StudentRequest
+
         Student updatedStudent = studentRepository.save(studentToUpdate);
         log.info("Successfully updated (PUT) student with ID: {}", id);
         return ResponseEntity.ok(convertToResponse(updatedStudent));
@@ -355,7 +363,7 @@ public class StudentController {
         }
         // Example: reverse the string and add a simple "salt"
         // THIS IS NOT SECURE, for demonstration only.
-        return new StringBuilder(password).reverse().toString() + ".TnP_Salt";
+        return new StringBuilder(password).reverse().toString() + ".TnP";
     }
 
     private StudentResponse convertToResponse(Student student) {
