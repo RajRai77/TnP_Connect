@@ -47,19 +47,19 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already in use.");
         }
 
-        // 2. Business Logic
-        Student newStudent = new Student();
-        newStudent.setName(request.getName()); // <-- Read from request
-        newStudent.setEmail(request.getEmail()); // <-- Read from request
-        newStudent.setBranch(request.getBranch()); // <-- Read from request
-        newStudent.setYear(request.getYear()); // <-- Read from request
-        newStudent.setCgpa(request.getCgpa()); // <-- Read from request
-        newStudent.setSkills(request.getSkills()); // <-- Read from request
-        newStudent.setProfilePicUrl(request.getProfilePicUrl()); // <-- Read from request
-        newStudent.setTnprollNo(request.getTnprollNo()); // <-- Add this if/when tnprollNo is in StudentRequest
 
-        // Hashing logic now reads from request.getPassword()
-        newStudent.setPasswordHash(simpleHash(request.getPassword())); // <-- CHANGED
+        Student newStudent = new Student();
+        newStudent.setName(request.getName());
+        newStudent.setEmail(request.getEmail());
+        newStudent.setBranch(request.getBranch());
+        newStudent.setYear(request.getYear());
+        newStudent.setCgpa(request.getCgpa());
+        newStudent.setSkills(request.getSkills());
+        newStudent.setProfilePicUrl(request.getProfilePicUrl());
+        newStudent.setTnprollNo(request.getTnprollNo());
+
+
+        newStudent.setPasswordHash(simpleHash(request.getPassword()));
 
         // 3. Save to Database
         Student savedStudent = studentRepository.save(newStudent);

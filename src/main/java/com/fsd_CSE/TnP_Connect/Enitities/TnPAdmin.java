@@ -1,5 +1,6 @@
 package com.fsd_CSE.TnP_Connect.Enitities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -33,21 +34,27 @@ public class TnPAdmin {
 
     // --- Relationships ---
     // This admin can create many items.
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Internship> createdInternships;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "postedByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Notification> createdNotifications;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Resource> createdResources;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Session> createdSessions;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "uploadedByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Notes> uploadedNotes;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Contest> createdContests;
 
@@ -69,6 +76,7 @@ public class TnPAdmin {
 
     //This getter will be used when we have to add new API
     //getter and setter for Relationships
+
     public java.util.List<Internship> getCreatedInternships() {
         return createdInternships;
     }
