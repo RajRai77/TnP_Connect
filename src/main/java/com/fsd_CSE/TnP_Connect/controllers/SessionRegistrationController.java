@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fsd_CSE.TnP_Connect.Enitities.*; // Importing all entities
+import com.fsd_CSE.TnP_Connect.Enitities.*;
 import com.fsd_CSE.TnP_Connect.ExceptionHandling.ResourceNotFoundException;
 import com.fsd_CSE.TnP_Connect.Repository.SessionRegistrationRepository;
 import com.fsd_CSE.TnP_Connect.Repository.SessionRepository;
@@ -23,22 +23,21 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/registrations")
 public class SessionRegistrationController {
-    // --- DEPENDENCIES ---
+
     @Autowired private SessionRegistrationRepository registrationRepository;
     @Autowired private StudentRepository studentRepository;
     @Autowired private SessionRepository sessionRepository;
 
-    // --- LOGGER ---
+
     private static final Logger log = LoggerFactory.getLogger(SessionRegistrationController.class);
 
-    // --- ENDPOINT 1: Register for Session ---
+    //  1: Register for Session 
     @PostMapping("/")
     public ResponseEntity<SessionRegistrationResponse> registerForSession(@RequestBody SessionRegistrationRequest request) {
         log.info("Student ID: {} is attempting to register for Session ID: {}", request.getStudentId(), request.getSessionId());
+        
 
-        // --- LOGIC MOVED FROM SERVICE ---
 
-        // Check if student is already registered
         registrationRepository.findByStudentIdAndSessionId(request.getStudentId(), request.getSessionId())
                 .ifPresent(reg -> {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Student is already registered for this session.");
@@ -53,16 +52,16 @@ public class SessionRegistrationController {
         SessionRegistration newRegistration = new SessionRegistration();
         newRegistration.setStudent(student);
         newRegistration.setSession(session);
-        newRegistration.setStatus("REGISTERED"); // Default status
+        newRegistration.setStatus("REGISTERED"); 
 
         SessionRegistration savedRegistration = registrationRepository.save(newRegistration);
         log.info("Successfully created registration with ID: {}", savedRegistration.getId());
 
-        // Convert to safe response
+
         return new ResponseEntity<>(convertToResponse(savedRegistration), HttpStatus.CREATED);
     }
 
-    // --- NEW ENDPOINT 2: Get All Registrations (Admin View) ---
+    //  2: Get All Registrations (Admin View) 
     @GetMapping("/")
     public ResponseEntity<List<SessionRegistrationResponse>> getAllRegistrations() {
         log.info("Fetching all session registrations");
@@ -73,7 +72,7 @@ public class SessionRegistrationController {
         return ResponseEntity.ok(responses);
     }
 
-    // --- NEW ENDPOINT 3: Get Registration by ID ---
+    //  3: Get Registration by ID
     @GetMapping("/{id}")
     public ResponseEntity<SessionRegistrationResponse> getRegistrationById(@PathVariable Integer id) {
         log.info("Fetching registration with ID: {}", id);
@@ -82,7 +81,7 @@ public class SessionRegistrationController {
         return ResponseEntity.ok(convertToResponse(registration));
     }
 
-    // --- NEW ENDPOINT 4: Update Registration Status (Admin Task) ---
+    //  4: Update Registration Status (Admin Task)
     @PatchMapping("/{id}/status")
     public ResponseEntity<SessionRegistrationResponse> updateRegistrationStatus(
             @PathVariable Integer id,
@@ -98,8 +97,14 @@ public class SessionRegistrationController {
         SessionRegistration registration = registrationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registration not found with ID: " + id));
 
-        // Add validation for allowed status values if needed (e.g., REGISTERED, ATTENDED, CANCELLED)
-        registration.setStatus(newStatus.toUpperCase()); // Store status consistently
+
+        if (statusUpdate.size() != 1 || !statusUpdate.containsKey("status")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only 'status' field is allowed in this request."
+            );
+        }
+        registration.setStatus(newStatus.toUpperCase());
 
         SessionRegistration updatedRegistration = registrationRepository.save(registration);
         log.info("Successfully updated status for registration ID: {}", id);
@@ -107,7 +112,7 @@ public class SessionRegistrationController {
         return ResponseEntity.ok(convertToResponse(updatedRegistration));
     }
 
-    // --- NEW ENDPOINT 5: Delete Registration (Withdraw / Admin Cleanup) ---
+    // 5: Delete Registration
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRegistration(@PathVariable Integer id) {
         log.warn("Attempting to delete registration with ID: {}", id);
@@ -120,15 +125,12 @@ public class SessionRegistrationController {
     }
 
 
-    // =================================================================================
-    // HELPER METHOD (Moved from Service)
-    // =================================================================================
     private SessionRegistrationResponse convertToResponse(SessionRegistration registration) {
         SessionRegistrationResponse response = new SessionRegistrationResponse();
         response.setRegistrationId(registration.getId());
         response.setStatus(registration.getStatus());
         response.setRegisteredAt(registration.getRegisteredAt());
-        // Safely get related data
+
         if (registration.getStudent() != null) {
             response.setStudentName(registration.getStudent().getName());
         }

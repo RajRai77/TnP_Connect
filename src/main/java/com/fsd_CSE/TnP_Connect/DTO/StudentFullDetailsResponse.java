@@ -16,13 +16,12 @@ public class StudentFullDetailsResponse {
     private BigDecimal cgpa;
     private String skills;
     private String profilePicUrl;
-    private String tnprollNo; // Added your field
+    private String tnprollNo;
 
-    // --- NEW: The nested lists of related data ---
-    private List<InternshipApplicationSummary> internshipApplications; // Renamed
-    private List<SessionRegistrationSummary> sessionRegistrations; // Renamed
 
-    // Getters and Setters for all fields...
+    private List<InternshipApplicationSummary> internshipApplications;
+    private List<SessionRegistrationSummary> sessionRegistrations;
+
     public Integer getId() {
         return id;
     }
@@ -97,19 +96,17 @@ public class StudentFullDetailsResponse {
 
     public List<InternshipApplicationSummary> getInternshipApplications() {
         return internshipApplications;
-    } // Renamed
+    }
 
     public void setInternshipApplications(List<InternshipApplicationSummary> apps) {
         this.internshipApplications = apps;
-    } // Renamed
+    }
 
     public List<SessionRegistrationSummary> getSessionRegistrations() {
         return sessionRegistrations;
-    } // Renamed
+    }
 
     public void setSessionRegistrations(List<SessionRegistrationSummary> regs) {
         this.sessionRegistrations = regs;
-    } // Renamed
-
-
+    }
 }

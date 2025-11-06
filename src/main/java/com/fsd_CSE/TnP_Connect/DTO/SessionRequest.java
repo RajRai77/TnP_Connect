@@ -13,7 +13,7 @@ public class SessionRequest {
         private OffsetDateTime sessionDatetime;
         private String joinUrl;
         private Integer createdByAdminId;
-        // Getters and Setters...
+
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
         public String getDescription() { return description; }

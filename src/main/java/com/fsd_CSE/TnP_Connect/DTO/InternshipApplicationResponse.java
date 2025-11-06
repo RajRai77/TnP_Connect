@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 
 
 
-// InternshipApplicationResponse.java (DTO for sending application data back)
 
 public class InternshipApplicationResponse {
     private Integer applicationId;
@@ -14,7 +13,7 @@ public class InternshipApplicationResponse {
     private String internshipRole;
     private String internshipCompany;
 
-    // Getters and Setters
+
     public Integer getApplicationId() { return applicationId; }
     public void setApplicationId(Integer applicationId) { this.applicationId = applicationId; }
     public String getStatus() { return status; }

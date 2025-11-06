@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -36,18 +35,16 @@ public class StudentController {
     private static final Logger log = LoggerFactory.getLogger(StudentController.class);
 
 
-    // --- ENDPOINT 1: Create Student ---
+    //  1: Create Student 
     @PostMapping("/")
-    public ResponseEntity<StudentResponse> createStudent(@org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
+    public ResponseEntity<StudentResponse> createStudent(@org.springframework.web.bind.annotation.RequestBody StudentRequest request) {
 
         log.info("Creating new student with email: {}", request.getEmail());
 
-        // 1. Validation Logic
         if (studentRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already in use.");
         }
-
-
+        
         Student newStudent = new Student();
         newStudent.setName(request.getName());
         newStudent.setEmail(request.getEmail());
@@ -57,22 +54,19 @@ public class StudentController {
         newStudent.setSkills(request.getSkills());
         newStudent.setProfilePicUrl(request.getProfilePicUrl());
         newStudent.setTnprollNo(request.getTnprollNo());
-
-
         newStudent.setPasswordHash(simpleHash(request.getPassword()));
-
-        // 3. Save to Database
+        
         Student savedStudent = studentRepository.save(newStudent);
         log.info("Created new student with ID: {}", savedStudent.getId());
 
-        // 4. Convert to "Response" DTO and return
+     
         return new ResponseEntity<>(convertToResponse(savedStudent), HttpStatus.CREATED);
     }
 
 
 
 
-    // --- ENDPOINT 2: Get Student By ID (Simple) ---
+    // 2 Get Student By ID  
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> getStudentById(@PathVariable Integer id) {
         log.info("Fetching student with ID: {}", id);
@@ -82,7 +76,7 @@ public class StudentController {
     }
 
 
-    // --- ENDPOINT 3: Get All Students ---
+    // 3. Get All Students 
     @GetMapping("/")
     public ResponseEntity<List<StudentResponse>> getAllStudents() {
         log.info("Fetching all students");
@@ -93,81 +87,64 @@ public class StudentController {
         return ResponseEntity.ok(studentResponses);
     }
 
-    // --- ENDPOINT 4: Update Student  ---
+    //  4. Update Student  
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponse> updateStudent(@PathVariable Integer id, @org.springframework.web.bind.annotation.RequestBody StudentRequest request) { // <-- CHANGED
         log.info("Updating (PUT) student with ID: {}", id);
 
         Student studentToUpdate = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-
-        // For PUT, we replace all fields from the request
-        studentToUpdate.setName(request.getName()); // <-- Read from request
-        studentToUpdate.setEmail(request.getEmail()); // <-- Read from request
-        studentToUpdate.setBranch(request.getBranch()); // <-- Read from request
-        studentToUpdate.setYear(request.getYear()); // <-- Read from request
-        studentToUpdate.setCgpa(request.getCgpa()); // <-- Read from request
-        studentToUpdate.setSkills(request.getSkills()); // <-- Read from request
-        studentToUpdate.setProfilePicUrl(request.getProfilePicUrl()); // <-- Read from request
-        // studentToUpdate.setTnprollNo(request.getTnprollNo()); // <-- Add this if/when tnprollNo is in StudentRequest
+        
+        //PUT hence replacing all fields
+        studentToUpdate.setName(request.getName());
+        studentToUpdate.setEmail(request.getEmail());
+        studentToUpdate.setBranch(request.getBranch());
+        studentToUpdate.setYear(request.getYear());
+        studentToUpdate.setCgpa(request.getCgpa());
+        studentToUpdate.setSkills(request.getSkills());
+        studentToUpdate.setProfilePicUrl(request.getProfilePicUrl());
+        studentToUpdate.setTnprollNo(request.getTnprollNo());
 
         Student updatedStudent = studentRepository.save(studentToUpdate);
         log.info("Successfully updated (PUT) student with ID: {}", id);
         return ResponseEntity.ok(convertToResponse(updatedStudent));
     }
 
-    // --- ENDPOINT 5: Patch Student (Partial Update) ---
-    // --- UPDATED with @RequestBody annotation for Swagger ---
+    //  5: Patch Student
     @PatchMapping("/{id}")
     public ResponseEntity<StudentResponse> patchStudent(
             @PathVariable Integer id,
-
-            // --- THIS IS THE FIX ---
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "JSON object with one or more fields to update.",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(type = "object"),
-                            examples = {
-                                    @ExampleObject(
-                                            name = "Update Skills Example",
-                                            value = "{\"skills\": \"Java, Spring Boot, Python\"}"
-                                    ),
-                                    @ExampleObject(
-                                            name = "Update CGPA Example",
-                                            value = "{\"cgpa\": 9.1}"
-                                    )
-                            }
-                    )
-            )
-            // --- END OF FIX ---
             @org.springframework.web.bind.annotation.RequestBody Map<String, Object> updates) {
-
-        log.info("Partially updating (PATCH) student with ID: {}", id);
 
         Student studentToPatch = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
+        log.info("Partially updating (PATCH) student with ID: {}", id);
+        if (updates.containsKey("id")) {
+            throw new IllegalArgumentException("Updating 'id' is not allowed.");
+        }
+        if (updates.containsKey("tnprollNo")) {
+            throw new IllegalArgumentException("Updating tnproll no is not allowed.");
+        }
+        if (updates.containsKey("email")) {
+            throw new IllegalArgumentException("Updating email is not allowed.");
+        }
         updates.forEach((key, value) -> {
             switch (key) {
                 case "name": studentToPatch.setName((String) value); break;
-                case "email": studentToPatch.setEmail((String) value); break;
                 case "branch": studentToPatch.setBranch((String) value); break;
                 case "year": studentToPatch.setYear((Integer) value); break;
                 case "cgpa": studentToPatch.setCgpa(BigDecimal.valueOf(((Number) value).doubleValue())); break;
                 case "skills": studentToPatch.setSkills((String) value); break;
                 case "profilePicUrl": studentToPatch.setProfilePicUrl((String) value); break;
-                case "tnprollNo": studentToPatch.setTnprollNo((String) value); break;
             }
         });
         Student updatedStudent = studentRepository.save(studentToPatch);
         log.info("Successfully patched student with ID: {}", id);
         return ResponseEntity.ok(convertToResponse(updatedStudent));
     }
-    // --- END OF UPDATE ---
 
-    // --- ENDPOINT 6: Delete Student ---
+    //  6: Delete Student
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
         log.warn("Attempting to delete student with ID: {}", id);
@@ -179,7 +156,7 @@ public class StudentController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- ENDPOINT 7: Get Student Skills ---
+    //  7: Get Student Skills
     @GetMapping("/{id}/skills")
     public ResponseEntity<Map<String, String>> getStudentSkills(@PathVariable Integer id) {
         log.info("Fetching skills for student with ID: {}", id);
@@ -188,7 +165,7 @@ public class StudentController {
         return ResponseEntity.ok(Map.of("skills", student.getSkills()));
     }
 
-    // --- ENDPOINT 8: Search Students ---
+    //  8: Search Students
     @GetMapping("/search")
     public ResponseEntity<List<StudentResponse>> searchStudents(
             @RequestParam(required = false) String branch,
@@ -203,7 +180,7 @@ public class StudentController {
     }
 
 
-    // --- ENDPOINT 9: Get all applications for a specific student ---
+    //  9: Get all applications for a specific student
     @GetMapping("/{id}/internship-applications")
     public ResponseEntity<List<InternshipApplicationSummary>> getStudentApplications(@PathVariable Integer id) { // Renamed
         log.info("Fetching internship applications for student ID: {}", id);
@@ -212,14 +189,14 @@ public class StudentController {
 
         List<InternshipApplication> applications = student.getInternshipApplications();
 
-        List<InternshipApplicationSummary> summaries = applications.stream() // Renamed
-                .map(this::convertAppToSummary) // Using helper
+        List<InternshipApplicationSummary> summaries = applications.stream()
+                .map(this::convertAppToSummary)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(summaries); // Renamed
+        return ResponseEntity.ok(summaries);
     }
 
-    // --- ENDPOINT 10: Get all session registrations for a specific student ---
+    //  10: Get all session registrations for a specific student
     @GetMapping("/{id}/session-registrations")
     public ResponseEntity<List<SessionRegistrationSummary>> getStudentSessionRegistrations(@PathVariable Integer id) { // Renamed
         log.info("Fetching session registrations for student ID: {}", id);
@@ -228,24 +205,22 @@ public class StudentController {
 
         List<SessionRegistration> registrations = student.getSessionRegistrations();
 
-        List<SessionRegistrationSummary> summaries = registrations.stream() // Renamed
-                .map(this::convertRegToSummary) // Using helper
+        List<SessionRegistrationSummary> summaries = registrations.stream()
+                .map(this::convertRegToSummary)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(summaries); // Renamed
+        return ResponseEntity.ok(summaries);
     }
 
-    // --- NEW ENDPOINT 11: Get Full Student Details (Your Request) ---
+    //  11. Get Full Student Details
     @GetMapping("/{id}/full-details")
     public ResponseEntity<StudentFullDetailsResponse> getStudentFullDetails(@PathVariable Integer id) {
         log.info("Fetching FULL details for student ID: {}", id);
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
-        // 1. Create the main response object
         StudentFullDetailsResponse response = new StudentFullDetailsResponse();
 
-        // 2. Copy simple fields from student
         response.setId(student.getId());
         response.setName(student.getName());
         response.setEmail(student.getEmail());
@@ -256,129 +231,65 @@ public class StudentController {
         response.setProfilePicUrl(student.getProfilePicUrl());
         response.setTnprollNo(student.getTnprollNo());
 
-        // 3. Populate internship applications
+
         List<InternshipApplicationSummary> appSummaries = student.getInternshipApplications().stream() // Renamed
-                .map(this::convertAppToSummary) // Renamed
+                .map(this::convertAppToSummary)
                 .collect(Collectors.toList());
         response.setInternshipApplications(appSummaries);
 
-        // 4. Populate session registrations
+
         List<SessionRegistrationSummary> regSummaries = student.getSessionRegistrations().stream() // Renamed
-                .map(this::convertRegToSummary) // Renamed
+                .map(this::convertRegToSummary)
                 .collect(Collectors.toList());
         response.setSessionRegistrations(regSummaries);
 
         return ResponseEntity.ok(response);
     }
 
-    // --- NEW ENDPOINT 12: Secure Password Change ---
+    //  12: Password Patch
     @PatchMapping("/{id}/change-password")
     public ResponseEntity<Map<String, String>> changePassword(
             @PathVariable Integer id,
-            // Use the fully qualified name for Swagger's RequestBody annotation
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Requires old password, new password, and OTP.",
+                    description = "Requires new password and OTP.",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(type = "object", requiredProperties = {"oldPassword", "newPassword", "otp"}),
-                            examples = {
-                                    @ExampleObject(
-                                            name = "Password Change Example",
-                                            value = "{\"oldPassword\": \"currentSecret123\", \"newPassword\": \"newSecret456\", \"otp\": \"123456\"}"
-                                    )
-                            }
+                            schema = @Schema(type = "object", requiredProperties = {"newPassword", "otp"})
                     )
             )
-            // Use Spring's RequestBody annotation for the actual parameter binding
             @org.springframework.web.bind.annotation.RequestBody Map<String, String> passwordRequest) {
 
-        String oldPassword = passwordRequest.get("oldPassword");
         String newPassword = passwordRequest.get("newPassword");
         String otp = passwordRequest.get("otp");
-        if (oldPassword == null || newPassword == null || otp == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body must contain oldPassword, newPassword, and otp.");
+
+        if (newPassword == null || otp == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Request body must contain newPassword and otp.");
         }
 
-        log.info("Attempting password change for student ID: {}", id);
-        log.warn("OTP validation is currently skipped! (TODO)");
+       //Hardcoded OTP validation
+        if (!"123456".equals(otp)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid OTP.");
+        }
+
+        log.info("Attempting password reset (via OTP) for student ID: {}", id);
 
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
-        if (!student.getPasswordHash().equals(simpleHash(oldPassword))) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Old password does not match.");
-        }
-
         student.setPasswordHash(simpleHash(newPassword));
         studentRepository.save(student);
 
-        log.info("Successfully changed password for student ID: {}", id);
-        return ResponseEntity.ok(Map.of("message", "Password changed successfully."));
+        log.info("Password reset successfully for student ID: {}", id);
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully."));
     }
 
-//    // --- NEW ENDPOINT 13: Secure Email Change ---
-//    @PatchMapping("/{id}/change-email")
-//    public ResponseEntity<Map<String, String>> changeEmail(
-//            @PathVariable Integer id,
-//            // Use the fully qualified name for Swagger's RequestBody annotation
-//            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-//                    description = "Requires the new email address and OTP.",
-//                    required = true,
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(type = "object", requiredProperties = {"newEmail", "otp"}),
-//                            examples = {
-//                                    @ExampleObject(
-//                                            name = "Email Change Example",
-//                                            value = "{\"newEmail\": \"new.email@example.com\", \"otp\": \"654321\"}"
-//                                    )
-//                            }
-//                    )
-//            )
-//            // Use Spring's RequestBody annotation for the actual parameter binding
-//            @org.springframework.web.bind.annotation.RequestBody Map<String, String> emailRequest) {
-//
-//        String newEmail = emailRequest.get("newEmail");
-//        String otp = emailRequest.get("otp");
-//        if (newEmail == null || otp == null) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body must contain newEmail and otp.");
-//        }
-//
-//        log.info("Attempting email change for student ID: {} to {}", id, newEmail);
-//        log.warn("OTP validation is currently skipped! (TODO)");
-//
-//        if (studentRepository.findByEmail(newEmail).isPresent()) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "New email is already in use.");
-//        }
-//
-//        Student student = studentRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id)); // Corrected exception variable
-//
-//        student.setEmail(newEmail);
-//        studentRepository.save(student);
-//
-//        log.info("Successfully changed email for student ID: {}", id);
-//        return ResponseEntity.ok(Map.of("message", "Email changed successfully."));
-//    }
 
-
-
-
-
-
-
-    // =================================================================================
-    // HELPER METHODS (Moved from Service)
-    // =================================================================================
-
-    // Your simple, non-secure hashing function as requested
     private String simpleHash(String password) {
         if (password == null || password.isEmpty()) {
             return null;
         }
-        // Example: reverse the string and add a simple "salt"
-        // THIS IS NOT SECURE, for demonstration only.
         return new StringBuilder(password).reverse().toString() + ".TnP";
     }
 
@@ -395,7 +306,6 @@ public class StudentController {
         return response;
     }
 
-    // New helper for converting applications
     private InternshipApplicationSummary convertAppToSummary(InternshipApplication app) { // Renamed
         InternshipApplicationSummary summary = new InternshipApplicationSummary(); // Renamed
         summary.setApplicationId(app.getId());
@@ -408,9 +318,8 @@ public class StudentController {
         return summary;
     }
 
-    // New helper for converting registrations
-    private SessionRegistrationSummary convertRegToSummary(SessionRegistration reg) { // Renamed
-        SessionRegistrationSummary summary = new SessionRegistrationSummary(); // Renamed
+    private SessionRegistrationSummary convertRegToSummary(SessionRegistration reg) {
+        SessionRegistrationSummary summary = new SessionRegistrationSummary();
         summary.setRegistrationId(reg.getId());
         summary.setStatus(reg.getStatus());
         summary.setRegisteredAt(reg.getRegisteredAt());
@@ -420,8 +329,5 @@ public class StudentController {
         }
         return summary;
     }
-
-
-
 
 }

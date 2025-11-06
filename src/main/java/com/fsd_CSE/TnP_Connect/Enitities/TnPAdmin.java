@@ -32,8 +32,7 @@ public class TnPAdmin {
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
-    // This admin can create many items.
+
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Internship> createdInternships;
@@ -58,7 +57,7 @@ public class TnPAdmin {
     @OneToMany(mappedBy = "createdByAdmin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private java.util.List<Contest> createdContests;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getName() { return name; }
@@ -74,8 +73,6 @@ public class TnPAdmin {
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 
-    //This getter will be used when we have to add new API
-    //getter and setter for Relationships
 
     public java.util.List<Internship> getCreatedInternships() {
         return createdInternships;

@@ -18,19 +18,16 @@ public class InternshipApplication {
     @Column(name = "applied_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime appliedAt;
 
-    // --- Relationships ---
 
-    // Many applications can belong to one student
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    // Many applications can be for one internship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "internship_id", nullable = false)
     private Internship internship;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getStatus() { return status; }

@@ -18,25 +18,21 @@ import org.springframework.web.server.ResponseStatusException; // Added back tem
 import java.util.List;
 import java.util.stream.Collectors;
 
-// NoteController.java (API Endpoints)
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
-    // --- DEPENDENCIES ---
+
     @Autowired private notesRepository noteRepository; // Renamed back
     @Autowired private TnPAdminRepository tnpAdminRepository;
-
-    // --- LOGGER ---
+    
     private static final Logger log = LoggerFactory.getLogger(NoteController.class);
 
-    // --- ENDPOINT 1: Create Note ---
+    //   1: Create Note 
     // NOW ACCEPTS THE Notes ENTITY DIRECTLY
     @PostMapping("/")
     public ResponseEntity<NoteResponse> createNote(@RequestBody Notes requestNotes) { // Renamed parameter
 
-        // --- LOGIC MOVED FROM SERVICE & ADAPTED ---
-        // Get admin ID from nested object
         Integer adminId;
         if (requestNotes.getUploadedByAdmin() != null && requestNotes.getUploadedByAdmin().getId() != null) {
             adminId = requestNotes.getUploadedByAdmin().getId();
@@ -49,30 +45,28 @@ public class NoteController {
         TnPAdmin admin = tnpAdminRepository.findById(adminId)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with ID: " + adminId));
 
-        // Create a new entity to save, copying necessary fields
-        Notes notes = new Notes(); // Renamed
+        Notes notes = new Notes();
         notes.setTitle(requestNotes.getTitle());
         notes.setDescription(requestNotes.getDescription());
         notes.setFileUrl(requestNotes.getFileUrl());
         notes.setTargetBranch(requestNotes.getTargetBranch());
         notes.setTargetYear(requestNotes.getTargetYear());
-        notes.setUploadedByAdmin(admin); // Set relationship using fetched admin
+        notes.setUploadedByAdmin(admin);
 
-        Notes savedNotes = noteRepository.save(notes); // Renamed
+        Notes savedNotes = noteRepository.save(notes);
         log.info("Successfully uploaded note with ID {}", savedNotes.getId());
 
-        // Convert to safe response
         return new ResponseEntity<>(convertToResponse(savedNotes), HttpStatus.CREATED);
     }
 
-    // --- ENDPOINT 2: Get All Notes (with Filtering) ---
+    //   2: Get All Notes - Branch and Year Filter
     @GetMapping("/")
     public ResponseEntity<List<NoteResponse>> getAllNotes(
             @RequestParam(required = false) String branch,
             @RequestParam(required = false) Integer year) {
         log.info("Fetching notes. Filter by branch: {}, year: {}", branch, year);
 
-        // --- LOGIC MOVED FROM SERVICE ---
+
         List<Notes> allNotes = noteRepository.findAll(); // Renamed
 
         List<NoteResponse> responses = allNotes.stream()
@@ -84,21 +78,21 @@ public class NoteController {
         return ResponseEntity.ok(responses);
     }
 
-    // --- NEW ENDPOINT 3: Get Note by ID ---
+    //   3: Get Note by ID
     @GetMapping("/{id}")
     public ResponseEntity<NoteResponse> getNoteById(@PathVariable Integer id) {
         log.info("Fetching note with ID: {}", id);
-        Notes notes = noteRepository.findById(id) // Renamed
+        Notes notes = noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Note not found with ID: " + id));
         return ResponseEntity.ok(convertToResponse(notes));
     }
 
-    // --- ENDPOINT 4: Delete Note ---
+    //   4: Delete Note 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(@PathVariable Integer id) {
         log.warn("Attempting to delete note with ID: {}", id);
 
-        // --- LOGIC MOVED FROM SERVICE ---
+
         if (!noteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Note not found with ID: " + id);
         }
@@ -109,9 +103,6 @@ public class NoteController {
     }
 
 
-    // =================================================================================
-    // HELPER METHOD (Moved from Service)
-    // =================================================================================
     private NoteResponse convertToResponse(Notes notes) { // Renamed parameter
         NoteResponse response = new NoteResponse();
         response.setId(notes.getId());

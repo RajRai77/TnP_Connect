@@ -2,13 +2,11 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 
 
-// InternshipApplicationRequest.java (DTO for applying)
 
 public class InternshipApplicationRequest {
     private Integer studentId;
     private Integer internshipId;
 
-    // Getters and Setters
     public Integer getStudentId() { return studentId; }
     public void setStudentId(Integer studentId) { this.studentId = studentId; }
     public Integer getInternshipId() { return internshipId; }

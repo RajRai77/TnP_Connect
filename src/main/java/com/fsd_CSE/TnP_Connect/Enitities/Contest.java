@@ -16,7 +16,7 @@ public class Contest {
     private String title;
 
     @Column(nullable = false)
-    private String platform; // e.g., "HackerRank", "LeetCode"
+    private String platform;
 
     @Column(name = "contest_url", nullable = false)
     private String contestUrl;
@@ -34,12 +34,12 @@ public class Contest {
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_admin_id")
     private TnPAdmin createdByAdmin;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

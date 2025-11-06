@@ -2,7 +2,6 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.OffsetDateTime;
 
-// ContestResponse.java (DTO for viewing a contest)
 
 public class ContestResponse {
     private Integer id;
@@ -12,10 +11,10 @@ public class ContestResponse {
     private String description;
     private OffsetDateTime startDatetime;
     private OffsetDateTime endDatetime;
-    private String status; // Dynamic status: UPCOMING, LIVE, COMPLETED
+    private String status;
     private String createdByAdminName;
 
-    // Getters and Setters...
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

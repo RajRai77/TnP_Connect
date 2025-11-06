@@ -13,7 +13,6 @@ public class SessionRegistrationSummary {
     private String status;
     private OffsetDateTime registeredAt;
 
-    // Getters and Setters
     public Integer getRegistrationId() {
         return registrationId;
     }

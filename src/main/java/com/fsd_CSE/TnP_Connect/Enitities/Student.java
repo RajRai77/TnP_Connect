@@ -47,11 +47,11 @@ public class Student {
     private OffsetDateTime createdAt;
 
     // Relationships
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // Tells Swagger this is output-only
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InternshipApplication> internshipApplications;
 
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // Tells Swagger this is output-only
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SessionRegistration> sessionRegistrations;
 

@@ -1,19 +1,13 @@
 package com.fsd_CSE.TnP_Connect.DTO;
 
-
-// =====================================================================================
-//  TnPAdminResponse.java (DTO for sending admin data back)
-//  Note: No password field for security.
-// =====================================================================================
-
 public class TnPAdminResponse {
+
     private Integer id;
     private String name;
     private String email;
     private String role;
     private String designation;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getName() { return name; }

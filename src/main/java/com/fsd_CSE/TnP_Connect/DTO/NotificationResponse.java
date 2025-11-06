@@ -4,8 +4,6 @@ package com.fsd_CSE.TnP_Connect.DTO;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-// NotificationResponse.java (DTO for viewing a notification)
-// =====================================================================================
 public class NotificationResponse {
     private Integer id;
     private String title;
@@ -18,7 +16,6 @@ public class NotificationResponse {
     private OffsetDateTime createdAt;
     private String postedByAdminName;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

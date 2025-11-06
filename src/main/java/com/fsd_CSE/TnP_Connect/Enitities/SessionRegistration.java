@@ -13,13 +13,13 @@ public class SessionRegistration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String status; // e.g., "REGISTERED", "ATTENDED"
+    private String status;
 
     @CreationTimestamp
     @Column(name = "registered_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime registeredAt;
 
-    // --- Relationships ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
@@ -28,7 +28,7 @@ public class SessionRegistration {
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getStatus() { return status; }

@@ -9,14 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.fsd_CSE.TnP_Connect.Enitities.*; // Importing all entities
+import com.fsd_CSE.TnP_Connect.Enitities.*;
 import com.fsd_CSE.TnP_Connect.ExceptionHandling.ResourceNotFoundException;
-
 import org.springframework.web.server.ResponseStatusException;
-
-// For the summary classes
-
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -24,22 +21,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admins")
 public class TnPAdminController {
 
-    // --- DEPENDENCIES ---
+
     @Autowired
     private TnPAdminRepository tnpAdminRepository;
 
-    // --- LOGGER (Moved from Service) ---
     private static final Logger log = LoggerFactory.getLogger(TnPAdminController.class);
 
-    /**
-     * Endpoint to register a new admin account.
-     * NOW ACCEPTS THE TnPAdmin ENTITY.
-     */
+    //Register New Admin
     @PostMapping("/register")
     public ResponseEntity<TnPAdminResponse> registerAdmin(@RequestBody TnPAdmin adminRequest) {
         log.info("Registering new admin with email: {}", adminRequest.getEmail());
 
-        // --- LOGIC MOVED FROM SERVICE ---
         if (tnpAdminRepository.findByEmail(adminRequest.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Admin with this email already exists.");
         }
@@ -49,29 +41,22 @@ public class TnPAdminController {
         admin.setEmail(adminRequest.getEmail());
         admin.setRole(adminRequest.getRole());
         admin.setDesignation(adminRequest.getDesignation());
-
-        // Use the simpleHash function (assumes plain text in 'passwordHash' field)
         admin.setPasswordHash(simpleHash(adminRequest.getPasswordHash()));
 
         TnPAdmin savedAdmin = tnpAdminRepository.save(admin);
         log.info("Registered new admin with ID: {}", savedAdmin.getId());
 
-        // Convert to safe response
         return new ResponseEntity<>(convertToResponse(savedAdmin), HttpStatus.CREATED);
     }
 
-    /**
-     * Endpoint for an admin to log in.
-     */
+    //Admin Login
     @PostMapping("/login")
     public ResponseEntity<TnPAdminResponse> loginAdmin(@RequestBody LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
 
-        // --- LOGIC MOVED FROM SERVICE ---
         TnPAdmin admin = tnpAdminRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
-        // Use the same simpleHash for checking
         String expectedPasswordHash = simpleHash(request.getPassword());
         if (!expectedPasswordHash.equals(admin.getPasswordHash())) {
             log.warn("Failed login attempt for email: {}", request.getEmail());
@@ -82,14 +67,11 @@ public class TnPAdminController {
         return new ResponseEntity<>(convertToResponse(admin), HttpStatus.OK);
     }
 
-    /**
-     * Endpoint to get all registered admins (simple details).
-     */
+    //Get all registered Admin
     @GetMapping("/")
     public ResponseEntity<List<TnPAdminResponse>> getAllAdmins() {
         log.info("Fetching all admins (simple details)");
 
-        // --- LOGIC MOVED FROM SERVICE ---
         List<TnPAdmin> admins = tnpAdminRepository.findAll();
 
         List<TnPAdminResponse> responses = admins.stream()
@@ -99,26 +81,58 @@ public class TnPAdminController {
         return ResponseEntity.ok(responses);
     }
 
-    // =================================================================================
-    // NEW "FULL DETAILS" ENDPOINT (Your Request)
-    // =================================================================================
+    // PATCH: Update name, role, designation only
+    @PatchMapping("/{id}")
+    public ResponseEntity<TnPAdminResponse> patchAdmin(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Object> updates) {
+
+        log.info("Partially updating admin with ID: {}", id);
+
+        TnPAdmin admin = tnpAdminRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found with id: " + id));
+
+        if (updates.containsKey("id") || updates.containsKey("email") || updates.containsKey("password")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Updating id, email, or password is not allowed.");
+        }
+
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "name": admin.setName((String) value); break;
+                case "role": admin.setRole((String) value); break;
+                case "designation": admin.setDesignation((String) value); break;
+                default:
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Field '" + key + "' cannot be updated.");
+            }
+        });
+
+        TnPAdmin updatedAdmin = tnpAdminRepository.save(admin);
+
+        log.info("Successfully patched admin with ID: {}", id);
+        return ResponseEntity.ok(convertToResponse(updatedAdmin));
+    }
+
+
+
+    //Get full detaisl of Admin through id
     @GetMapping("/{id}/full-details")
     public ResponseEntity<TnPAdminFullDetailsResponse> getAdminFullDetails(@PathVariable Integer id) {
         log.info("Fetching FULL details for admin ID: {}", id);
         TnPAdmin admin = tnpAdminRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with id: " + id));
 
-        // 1. Create the main response object
         TnPAdminFullDetailsResponse response = new TnPAdminFullDetailsResponse();
 
-        // 2. Copy simple fields from admin
+
         response.setId(admin.getId());
         response.setName(admin.getName());
         response.setEmail(admin.getEmail());
         response.setRole(admin.getRole());
         response.setDesignation(admin.getDesignation());
 
-        // 3. Populate ALL nested lists
+
         response.setCreatedInternships(
                 admin.getCreatedInternships().stream()
                         .map(this::convertInternshipToSummary)
@@ -153,19 +167,14 @@ public class TnPAdminController {
         return ResponseEntity.ok(response);
     }
 
-    // =================================================================================
-    // HELPER METHODS (Moved from Service)
-    // =================================================================================
-
-    // Simple, non-secure hashing function
     private String simpleHash(String password) {
         if (password == null || password.isEmpty()) {
             return null;
         }
-        return new StringBuilder(password).reverse().toString() + ".TnP_Salt";
+        return new StringBuilder(password).reverse().toString() + ".TnP";
     }
 
-    // Helper to convert to the SIMPLE response
+
     private TnPAdminResponse convertToResponse(TnPAdmin admin) {
         TnPAdminResponse response = new TnPAdminResponse();
         response.setId(admin.getId());
@@ -176,7 +185,6 @@ public class TnPAdminController {
         return response;
     }
 
-    // --- NEW HELPER METHODS FOR SUMMARY CLASSES ---
     private InternshipSummary convertInternshipToSummary(Internship internship) {
         InternshipSummary summary = new InternshipSummary();
         summary.setId(internship.getId());
@@ -210,7 +218,7 @@ public class TnPAdminController {
         return summary;
     }
 
-    private NoteSummary convertNoteToSummary(Notes note) { // Assuming 'Note'
+    private NoteSummary convertNoteToSummary(Notes note) {
         NoteSummary summary = new NoteSummary();
         summary.setId(note.getId());
         summary.setTitle(note.getTitle());

@@ -4,10 +4,6 @@ import java.time.OffsetDateTime;
 
 public class NoteResponse {
 
-
-// NoteResponse.java (DTO for viewing a note)
-
-
     private Integer id;
     private String title;
     private String description;
@@ -17,7 +13,7 @@ public class NoteResponse {
     private OffsetDateTime uploadedAt;
     private String uploadedByAdminName;
 
-    // Getters and Setters
+
     public Integer getId() {
         return id;
     }

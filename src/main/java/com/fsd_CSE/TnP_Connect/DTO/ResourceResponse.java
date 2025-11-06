@@ -2,8 +2,7 @@ package com.fsd_CSE.TnP_Connect.DTO;
 
 import java.time.OffsetDateTime;
 
-// ResourceResponse.java (DTO for viewing a resource)
-// =====================================================================================
+
 public class ResourceResponse {
     private Integer id;
     private String title;
@@ -13,7 +12,6 @@ public class ResourceResponse {
     private OffsetDateTime createdAt;
     private String createdByAdminName;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

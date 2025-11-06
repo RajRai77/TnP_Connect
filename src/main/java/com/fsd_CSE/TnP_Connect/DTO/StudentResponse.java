@@ -1,15 +1,7 @@
 package com.fsd_CSE.TnP_Connect.DTO;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
-
-// =====================================================================================
-//  StudentResponse.java (DTO for outgoing data)
-//  This class defines the shape of the JSON you send back to the user.
-//  It has NO password field for security.
-// =====================================================================================
 
 @Data
 public class StudentResponse {
@@ -22,7 +14,6 @@ public class StudentResponse {
     private String skills;
     private String profilePicUrl;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getName() { return name; }

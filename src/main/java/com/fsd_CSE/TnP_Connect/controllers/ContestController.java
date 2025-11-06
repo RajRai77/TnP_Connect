@@ -19,26 +19,19 @@ import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
 
-// ContestController.java (API Endpoints)
-
 @RestController
 @RequestMapping("/api/contests")
 public class ContestController {
-
-    // --- DEPENDENCIES ---
+    
     @Autowired private ContestRepository contestRepository;
     @Autowired private TnPAdminRepository tnpAdminRepository;
-
-    // --- LOGGER ---
+    
     private static final Logger log = LoggerFactory.getLogger(ContestController.class);
 
-    // --- ENDPOINT 1: Create Contest ---
-    // NOW ACCEPTS THE Contest ENTITY DIRECTLY
+    // 1: Create Contest
     @PostMapping("/")
     public ResponseEntity<ContestResponse> createContest(@RequestBody Contest requestContest) {
 
-        // --- LOGIC MOVED FROM SERVICE & ADAPTED ---
-        // Get the admin ID from the nested object in the request
         Integer adminId;
         if (requestContest.getCreatedByAdmin() != null && requestContest.getCreatedByAdmin().getId() != null) {
             adminId = requestContest.getCreatedByAdmin().getId();
@@ -52,9 +45,6 @@ public class ContestController {
         TnPAdmin admin = tnpAdminRepository.findById(adminId)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with ID: " + adminId));
 
-        // Create a new entity to save, copying necessary fields
-        // We don't save the requestContest directly to avoid potential security issues
-        // or unwanted data from the request body.
         Contest contest = new Contest();
         contest.setTitle(requestContest.getTitle());
         contest.setPlatform(requestContest.getPlatform());
@@ -62,21 +52,19 @@ public class ContestController {
         contest.setDescription(requestContest.getDescription());
         contest.setStartDatetime(requestContest.getStartDatetime());
         contest.setEndDatetime(requestContest.getEndDatetime());
-        contest.setCreatedByAdmin(admin); // Set the relationship using the fetched admin
+        contest.setCreatedByAdmin(admin);
 
         Contest savedContest = contestRepository.save(contest);
         log.info("Admin ID {} created new contest with ID {}", admin.getId(), savedContest.getId());
 
-        // Convert to safe response
         return new ResponseEntity<>(convertToResponse(savedContest), HttpStatus.CREATED);
     }
 
-    // --- ENDPOINT 2: Get All Contests ---
+    //  2: Get All Contests
     @GetMapping("/")
     public ResponseEntity<List<ContestResponse>> getAllContests() {
         log.info("Fetching all contests");
 
-        // --- LOGIC MOVED FROM SERVICE ---
         List<Contest> contests = contestRepository.findAll();
 
         List<ContestResponse> responses = contests.stream()
@@ -86,7 +74,7 @@ public class ContestController {
         return ResponseEntity.ok(responses);
     }
 
-    // --- ENDPOINT 3: Get Contest by ID ---
+    //  3: Get Contest by ID
     @GetMapping("/{id}")
     public ResponseEntity<ContestResponse> getContestById(@PathVariable Integer id) {
         log.info("Fetching contest with ID: {}", id);
@@ -95,7 +83,7 @@ public class ContestController {
         return ResponseEntity.ok(convertToResponse(contest));
     }
 
-    // --- ENDPOINT 4: Delete Contest ---
+    //  ENDPOINT 4: Delete Contest 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteContest(@PathVariable Integer id) {
         log.warn("Attempting to delete contest with ID: {}", id);
@@ -107,15 +95,7 @@ public class ContestController {
         return ResponseEntity.noContent().build();
     }
 
-    // NOTE: Relationship endpoint for subscribers (/api/contests/{id}/subscriptions)
-    // will be added when we create the ContestSubscription feature.
 
-
-    // =================================================================================
-    // HELPER METHODS (Moved from Service)
-    // =================================================================================
-
-    // Helper to convert Entity to Response
     private ContestResponse convertToResponse(Contest contest) {
         ContestResponse response = new ContestResponse();
         response.setId(contest.getId());
@@ -125,14 +105,13 @@ public class ContestController {
         response.setDescription(contest.getDescription());
         response.setStartDatetime(contest.getStartDatetime());
         response.setEndDatetime(contest.getEndDatetime());
-        response.setStatus(calculateStatus(contest)); // Calculate status dynamically
+        response.setStatus(calculateStatus(contest));
         if (contest.getCreatedByAdmin() != null) {
             response.setCreatedByAdminName(contest.getCreatedByAdmin().getName());
         }
         return response;
     }
 
-    // Helper method to determine the contest status
     private String calculateStatus(Contest contest) {
         OffsetDateTime now = OffsetDateTime.now();
         if (now.isBefore(contest.getStartDatetime())) {

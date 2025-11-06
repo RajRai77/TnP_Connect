@@ -5,18 +5,17 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class StudentRequest { // Note: In its own file, this should be 'public class StudentRequest'
+public class StudentRequest {
     private String tnprollNo;
     private String name;
     private String email;
-    private String password; // Changed from passwordHash to be clear
+    private String password;
     private String branch;
     private Integer year;
     private BigDecimal cgpa;
     private String skills;
     private String profilePicUrl;
 
-    // Getters and Setters (as you provided in your original file)
     public String getTnprollNo() { return tnprollNo; }
     public void setTnprollNo(String tnprollNo) { this.tnprollNo = tnprollNo; }
     public String getName() { return name; }

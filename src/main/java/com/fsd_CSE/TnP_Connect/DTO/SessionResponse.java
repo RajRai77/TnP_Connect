@@ -13,7 +13,8 @@ public class SessionResponse {
     private String joinUrl;
     private String createdByAdminName;
     private int registrationCount;
-    // Getters and Setters...
+
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

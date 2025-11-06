@@ -8,7 +8,7 @@ public class SessionRegistrationResponse {
     private OffsetDateTime registeredAt;
     private String studentName;
     private String sessionTitle;
-    // Getters and Setters...
+
     public Integer getRegistrationId() { return registrationId; }
     public void setRegistrationId(Integer registrationId) { this.registrationId = registrationId; }
     public String getStatus() { return status; }

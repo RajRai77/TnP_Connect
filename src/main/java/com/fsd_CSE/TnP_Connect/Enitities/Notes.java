@@ -23,21 +23,20 @@ public class Notes {
     private String fileUrl;
 
     @Column(name = "target_branch")
-    private String targetBranch; // e.g., "CSE", "ALL"
+    private String targetBranch;
 
     @Column(name = "target_year")
-    private Integer targetYear; // e.g., 4, 0 for ALL
+    private Integer targetYear;
 
     @CreationTimestamp
     @Column(name = "uploaded_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime uploadedAt;
 
-    // --- Relationships ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploaded_by_admin_id", referencedColumnName = "admin_id")
     private TnPAdmin uploadedByAdmin;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

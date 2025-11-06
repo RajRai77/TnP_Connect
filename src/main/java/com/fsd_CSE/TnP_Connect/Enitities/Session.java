@@ -20,13 +20,13 @@ public class Session {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String speaker; // e.g., "HR from TechCorp", "Mr. Sharma (Alumni)"
+    private String speaker;
 
     @Column(name = "target_branch")
-    private String targetBranch; // e.g., "CSE", "ALL"
+    private String targetBranch;
 
     @Column(name = "target_year")
-    private Integer targetYear; // e.g., 4, 0 for ALL
+    private Integer targetYear;
 
     @Column(name = "session_datetime", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime sessionDatetime;
@@ -38,7 +38,7 @@ public class Session {
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_admin_id", referencedColumnName = "admin_id")
     private TnPAdmin createdByAdmin;
@@ -46,7 +46,7 @@ public class Session {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SessionRegistration> registrations;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

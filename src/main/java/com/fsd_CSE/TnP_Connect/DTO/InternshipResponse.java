@@ -3,7 +3,6 @@ package com.fsd_CSE.TnP_Connect.DTO;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-// InternshipResponse.java (DTO for sending internship data back)
 
 public class InternshipResponse {
     private Integer id;
@@ -15,9 +14,8 @@ public class InternshipResponse {
     private String description;
     private String status;
     private OffsetDateTime createdAt;
-    private String createdByAdminName; // Show the admin's name
+    private String createdByAdminName;
 
-    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getRole() { return role; }

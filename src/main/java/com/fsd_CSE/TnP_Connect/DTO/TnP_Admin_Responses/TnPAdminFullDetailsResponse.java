@@ -6,14 +6,14 @@ import java.util.List;
 
 @Data
 public class TnPAdminFullDetailsResponse {
-    // Simple fields from TnPAdminResponse
+
     private Integer id;
     private String name;
     private String email;
     private String role;
     private String designation;
 
-    // Nested lists of created items
+
     private List<InternshipSummary> createdInternships;
     private List<NotificationSummary> createdNotifications;
     private List<ResourceSummary> createdResources;

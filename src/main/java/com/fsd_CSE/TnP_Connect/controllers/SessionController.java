@@ -20,19 +20,18 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/sessions")
 public class SessionController {
-    // --- DEPENDENCIES ---
+
     @Autowired private SessionRepository sessionRepository;
     @Autowired private TnPAdminRepository tnpAdminRepository;
 
-    // --- LOGGER ---
+
     private static final Logger log = LoggerFactory.getLogger(SessionController.class);
 
-    // --- ENDPOINT 1: Create Session ---
+    // 1: Create Session 
     @PostMapping("/")
     public ResponseEntity<SessionResponse> createSession(@RequestBody SessionRequest request) {
         log.info("Attempting to create session by admin ID: {}", request.getCreatedByAdminId());
-
-        // --- LOGIC MOVED FROM SERVICE ---
+        
         TnPAdmin admin = tnpAdminRepository.findById(request.getCreatedByAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Admin not found with ID: " + request.getCreatedByAdminId()));
 
@@ -48,17 +47,15 @@ public class SessionController {
 
         Session savedSession = sessionRepository.save(session);
         log.info("Successfully created session with ID: {}", savedSession.getId());
-
-        // Convert to safe response
+        
         return new ResponseEntity<>(convertToResponse(savedSession), HttpStatus.CREATED);
     }
 
-    // --- ENDPOINT 2: Get All Sessions (Simple Details) ---
+    //  2: Get All Sessions
     @GetMapping("/")
     public ResponseEntity<List<SessionResponse>> getAllSessions() {
         log.info("Fetching all sessions");
-
-        // --- LOGIC MOVED FROM SERVICE ---
+        
         List<Session> sessions = sessionRepository.findAll();
 
         List<SessionResponse> responses = sessions.stream()
@@ -68,7 +65,7 @@ public class SessionController {
         return ResponseEntity.ok(responses);
     }
 
-    // --- NEW ENDPOINT 3: Get Session by ID (Simple Details) ---
+    //  3: Get Session by ID
     @GetMapping("/{id}")
     public ResponseEntity<SessionResponse> getSessionById(@PathVariable Integer id) {
         log.info("Fetching session with ID: {}", id);
@@ -77,7 +74,7 @@ public class SessionController {
         return ResponseEntity.ok(convertToResponse(session));
     }
 
-    // --- NEW ENDPOINT 4: Delete Session ---
+    //  4: Delete Session
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSession(@PathVariable Integer id) {
         log.warn("Attempting to delete session with ID: {}", id);
@@ -89,22 +86,17 @@ public class SessionController {
         return ResponseEntity.noContent().build();
     }
 
-    // =================================================================================
-    // NEW RELATIONSHIP ENDPOINT
-    // =================================================================================
-
-    // --- NEW ENDPOINT 5: Get all registrations for a specific session ---
+    // 5: Get all registrations for a specific session
     @GetMapping("/{id}/registrations")
     public ResponseEntity<List<StudentRegistrationSummary>> getSessionRegistrations(@PathVariable Integer id) {
         log.info("Fetching registrations for session ID: {}", id);
-        // 1. Find the session
+
         Session session = sessionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Session not found with ID: " + id));
 
-        // 2. Get the list of registrations from the entity
+
         List<SessionRegistration> registrations = session.getRegistrations();
 
-        // 3. Convert to the summary class
         List<StudentRegistrationSummary> summaries = registrations.stream()
                 .map(this::convertRegToStudentSummary)
                 .collect(Collectors.toList());
@@ -113,11 +105,6 @@ public class SessionController {
     }
 
 
-    // =================================================================================
-    // HELPER METHODS (Moved from Service)
-    // =================================================================================
-
-    // Helper to convert Entity to SIMPLE Response
     private SessionResponse convertToResponse(Session session) {
         SessionResponse response = new SessionResponse();
         response.setId(session.getId());
@@ -131,7 +118,7 @@ public class SessionController {
         if (session.getCreatedByAdmin() != null) {
             response.setCreatedByAdminName(session.getCreatedByAdmin().getName());
         }
-        // Calculate registration count safely
+
         if (session.getRegistrations() != null) {
             response.setRegistrationCount(session.getRegistrations().size());
         } else {
@@ -140,7 +127,6 @@ public class SessionController {
         return response;
     }
 
-    // NEW Helper to convert Registration to Student Summary for this endpoint
     private StudentRegistrationSummary convertRegToStudentSummary(SessionRegistration reg) {
         StudentRegistrationSummary summary = new StudentRegistrationSummary();
         summary.setRegistrationId(reg.getId());

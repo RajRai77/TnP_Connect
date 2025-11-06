@@ -18,24 +18,24 @@ public class Resource {
     private String title;
 
     @Column(nullable = false)
-    private String type; // e.g., "PDF", "Video Link", "Article"
+    private String type;
 
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
     @Column(columnDefinition = "TEXT")
-    private String description; // The new description field
+    private String description;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "admin_id")
     private TnPAdmin createdByAdmin;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

@@ -26,22 +26,22 @@ public class Notification {
     @Column(name = "target_year")
     private Integer targetYear;
 
-    private String link; // Optional link
+    private String link;
 
     @Column(name = "event_date")
-    private LocalDate eventDate; // For deadlines or event dates
-    private String category; // e.g., "Placement Drive", "Workshop"
+    private LocalDate eventDate;
+    private String category;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posted_by_admin_id", referencedColumnName = "admin_id")
     private TnPAdmin postedByAdmin;
 
-    // --- Manually Added Getters and Setters ---
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }

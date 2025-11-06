@@ -33,23 +33,20 @@ import java.util.UUID;
 public class FileController {
 
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
-
-    // --- Logic from Service moved here ---
+    
     private final Path rootLocation;
 
-    // The Controller now directly depends on the properties
     @Autowired
     public FileController(FileStorageProperties properties) {
         this.rootLocation = Paths.get(properties.getUploadDir()).toAbsolutePath().normalize();
     }
 
-    // init() method from Service moved here
+
     @PostConstruct
     public void init() {
         try {
-            // Create the root directory
             Files.createDirectories(rootLocation);
-            // Create the sub-directories
+            
             Files.createDirectories(rootLocation.resolve("profilePic"));
             Files.createDirectories(rootLocation.resolve("notes"));
             Files.createDirectories(rootLocation.resolve("resources"));
@@ -60,7 +57,7 @@ public class FileController {
         }
     }
 
-    // --- ENDPOINT 1: Upload File ---
+    //   1: Upload File 
     @PostMapping(value = "/upload/{subDirectory}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadFile(
             // We also change @RequestParam to @RequestPart for clarity
@@ -73,23 +70,22 @@ public class FileController {
         return ResponseEntity.ok(Map.of("url", fileUrl));
     }
 
-    // --- ENDPOINT 2: Serve File ---
+    //   2: Serve File 
     @GetMapping("/files/{subDirectory}/{filename:.+}")
     public ResponseEntity<Resource> serveFile(
             @PathVariable String subDirectory,
             @PathVariable String filename) {
 
-        // Call the private helper method (logic from service)
         Resource file = loadFileAsResource(filename, subDirectory);
 
-        // Try to determine file's content type
+
         String contentType = null;
         try {
             contentType = Files.probeContentType(file.getFile().toPath());
         } catch (IOException e) {
             log.warn("Could not determine file type for: {}", filename);
         }
-        // Default content type
+
         if(contentType == null) {
             contentType = "application/octet-stream";
         }
@@ -100,42 +96,33 @@ public class FileController {
                 .body(file);
     }
 
-    // =====================================================================================
-    // HELPER METHODS (Copied from FileStorageService)
-    // These are now private methods within the controller.
-    // =====================================================================================
-
     private String storeFile(MultipartFile file, String subDirectory) {
         try {
             if (file.isEmpty()) {
                 throw new FileStorageException("Failed to store empty file.");
             }
 
-            // 1. Sanitize original filename
+
             String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
-            // --- THIS IS THE FIX ---
-            // Replace all spaces, colons, and other unsafe characters with underscores
             String sanitizedFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\._-]", "_");
-            // --- END OF FIX ---
 
-            // 2. Create a unique filename
+
             String uniqueFilename = UUID.randomUUID().toString() + "_" + sanitizedFilename;
 
-            // 3. Resolve the target path
+
             Path subDirPath = rootLocation.resolve(subDirectory).normalize();
             if (!subDirPath.startsWith(rootLocation)) {
                 throw new FileStorageException("Cannot store file outside current directory.");
             }
             Path targetLocation = subDirPath.resolve(uniqueFilename);
 
-            // 4. Save the file
+
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 log.info("Stored file at: {}", targetLocation);
             }
 
-            // 5. Return the *URL* to access this file
             return ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/api/files/")
                     .path(subDirectory)

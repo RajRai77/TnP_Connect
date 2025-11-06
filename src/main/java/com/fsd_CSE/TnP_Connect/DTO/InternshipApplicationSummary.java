@@ -12,7 +12,6 @@ public class InternshipApplicationSummary {
     private String status;
     private OffsetDateTime appliedAt;
 
-    // Getters and Setters
     public Integer getApplicationId() {
         return applicationId;
     }

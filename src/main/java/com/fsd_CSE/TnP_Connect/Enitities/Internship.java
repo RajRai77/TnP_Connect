@@ -31,14 +31,12 @@ public class Internship {
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
-    // --- Relationships ---
 
-    // Many internships can be created by one admin
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "admin_id")
     private TnPAdmin createdByAdmin;
 
-    // One internship can have many applications
+
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InternshipApplication> applications;
 
