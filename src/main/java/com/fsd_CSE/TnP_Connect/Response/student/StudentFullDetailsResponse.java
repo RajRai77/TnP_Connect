@@ -1,5 +1,7 @@
-package com.fsd_CSE.TnP_Connect.DTO;
+package com.fsd_CSE.TnP_Connect.Response.student;
 
+import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipApplicationSummary;
+import com.fsd_CSE.TnP_Connect.Response.session.SessionRegistrationSummary;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.fsd_CSE.TnP_Connect.DTO;
+package com.fsd_CSE.TnP_Connect.Response.Internship;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

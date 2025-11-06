@@ -1,5 +1,5 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.ContestResponse;
+import com.fsd_CSE.TnP_Connect.Response.ContestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

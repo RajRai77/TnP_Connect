@@ -1,4 +1,4 @@
-package com.fsd_CSE.TnP_Connect.DTO.TnP_Admin_Responses;
+package com.fsd_CSE.TnP_Connect.Response.TnP_Admin_Responses;
 
 
 import lombok.Data;

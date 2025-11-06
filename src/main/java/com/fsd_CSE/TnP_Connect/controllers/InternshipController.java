@@ -1,6 +1,6 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.InternshipResponse;
-import com.fsd_CSE.TnP_Connect.DTO.StudentApplicantSummary;
+import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipResponse;
+import com.fsd_CSE.TnP_Connect.Response.student.StudentApplicantSummary;
 import com.fsd_CSE.TnP_Connect.Repository.InternshipRepository;
 import com.fsd_CSE.TnP_Connect.Repository.TnPAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;

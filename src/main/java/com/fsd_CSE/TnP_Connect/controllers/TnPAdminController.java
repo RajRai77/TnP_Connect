@@ -1,7 +1,7 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.LoginRequest;
-import com.fsd_CSE.TnP_Connect.DTO.TnPAdminResponse;
-import com.fsd_CSE.TnP_Connect.DTO.TnP_Admin_Responses.*;
+import com.fsd_CSE.TnP_Connect.Response.LoginRequest;
+import com.fsd_CSE.TnP_Connect.Response.TnPAdminResponse;
+import com.fsd_CSE.TnP_Connect.Response.TnP_Admin_Responses.*;
 import com.fsd_CSE.TnP_Connect.Repository.TnPAdminRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

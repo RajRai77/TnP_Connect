@@ -1,6 +1,6 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.InternshipApplicationRequest;
-import com.fsd_CSE.TnP_Connect.DTO.InternshipApplicationResponse;
+import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipApplicationRequest;
+import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipApplicationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

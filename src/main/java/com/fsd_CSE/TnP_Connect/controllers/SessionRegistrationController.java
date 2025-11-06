@@ -1,6 +1,6 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.SessionRegistrationRequest;
-import com.fsd_CSE.TnP_Connect.DTO.SessionRegistrationResponse;
+import com.fsd_CSE.TnP_Connect.Response.session.SessionRegistrationRequest;
+import com.fsd_CSE.TnP_Connect.Response.session.SessionRegistrationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

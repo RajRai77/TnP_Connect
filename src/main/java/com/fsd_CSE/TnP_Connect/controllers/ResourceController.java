@@ -1,6 +1,6 @@
 package com.fsd_CSE.TnP_Connect.controllers;
 
-import com.fsd_CSE.TnP_Connect.DTO.ResourceResponse;
+import com.fsd_CSE.TnP_Connect.Response.ResourceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

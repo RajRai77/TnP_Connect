@@ -1,5 +1,9 @@
 package com.fsd_CSE.TnP_Connect.controllers;
-import com.fsd_CSE.TnP_Connect.DTO.*;
+import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipApplicationSummary;
+import com.fsd_CSE.TnP_Connect.Response.session.SessionRegistrationSummary;
+import com.fsd_CSE.TnP_Connect.Response.student.StudentFullDetailsResponse;
+import com.fsd_CSE.TnP_Connect.Response.student.StudentRequest;
+import com.fsd_CSE.TnP_Connect.Response.student.StudentResponse;
 import com.fsd_CSE.TnP_Connect.Enitities.InternshipApplication;
 import com.fsd_CSE.TnP_Connect.Enitities.SessionRegistration;
 import com.fsd_CSE.TnP_Connect.Enitities.Student;
