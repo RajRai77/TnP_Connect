@@ -60,7 +60,7 @@ public class FileController {
     //   1: Upload File 
     @PostMapping(value = "/upload/{subDirectory}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadFile(
-            // We also change @RequestParam to @RequestPart for clarity
+
             @RequestPart("file") MultipartFile file,
             @PathVariable String subDirectory) {
 

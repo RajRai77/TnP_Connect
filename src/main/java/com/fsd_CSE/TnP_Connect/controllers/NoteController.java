@@ -9,11 +9,11 @@ import com.fsd_CSE.TnP_Connect.Enitities.TnPAdmin;
 import com.fsd_CSE.TnP_Connect.ExceptionHandling.ResourceNotFoundException;
 
 import com.fsd_CSE.TnP_Connect.Repository.notesRepository;
-import com.fsd_CSE.TnP_Connect.Repository.TnPAdminRepository; // Needed for create logic
+import com.fsd_CSE.TnP_Connect.Repository.TnPAdminRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.server.ResponseStatusException; // Added back temporarily for BAD_REQUEST
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,15 +23,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/notes")
 public class NoteController {
 
-    @Autowired private notesRepository noteRepository; // Renamed back
+    @Autowired private notesRepository noteRepository;
     @Autowired private TnPAdminRepository tnpAdminRepository;
     
     private static final Logger log = LoggerFactory.getLogger(NoteController.class);
 
-    //   1: Create Note 
-    // NOW ACCEPTS THE Notes ENTITY DIRECTLY
+    //   1: Create Note
     @PostMapping("/")
-    public ResponseEntity<NoteResponse> createNote(@RequestBody Notes requestNotes) { // Renamed parameter
+    public ResponseEntity<NoteResponse> createNote(@RequestBody Notes requestNotes) {
 
         Integer adminId;
         if (requestNotes.getUploadedByAdmin() != null && requestNotes.getUploadedByAdmin().getId() != null) {
@@ -67,11 +66,11 @@ public class NoteController {
         log.info("Fetching notes. Filter by branch: {}, year: {}", branch, year);
 
 
-        List<Notes> allNotes = noteRepository.findAll(); // Renamed
+        List<Notes> allNotes = noteRepository.findAll();
 
         List<NoteResponse> responses = allNotes.stream()
                 .filter(n -> branch == null || "ALL".equalsIgnoreCase(n.getTargetBranch()) || branch.equalsIgnoreCase(n.getTargetBranch()))
-                .filter(n -> year == null || n.getTargetYear() == null || n.getTargetYear() == 0 || year.equals(n.getTargetYear())) // Added null check
+                .filter(n -> year == null || n.getTargetYear() == null || n.getTargetYear() == 0 || year.equals(n.getTargetYear()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
 
@@ -103,7 +102,7 @@ public class NoteController {
     }
 
 
-    private NoteResponse convertToResponse(Notes notes) { // Renamed parameter
+    private NoteResponse convertToResponse(Notes notes) {
         NoteResponse response = new NoteResponse();
         response.setId(notes.getId());
         response.setTitle(notes.getTitle());
