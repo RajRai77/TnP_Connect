@@ -9,7 +9,6 @@ import java.util.Optional;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
-    // This custom method will be useful for login features later
     Optional<Student> findByEmail(String email);
 
 }

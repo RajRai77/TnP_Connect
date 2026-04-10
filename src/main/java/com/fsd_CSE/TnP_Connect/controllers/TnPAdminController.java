@@ -25,6 +25,8 @@ public class TnPAdminController {
     @Autowired
     private TnPAdminRepository tnpAdminRepository;
 
+    @Autowired
+    private com.fsd_CSE.TnP_Connect.util.JwtUtil jwtUtil;
     private static final Logger log = LoggerFactory.getLogger(TnPAdminController.class);
 
     //Register New Admin
@@ -59,12 +61,18 @@ public class TnPAdminController {
 
         String expectedPasswordHash = simpleHash(request.getPassword());
         if (!expectedPasswordHash.equals(admin.getPasswordHash())) {
-            log.warn("Failed login attempt for email: {}", request.getEmail());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        log.info("Admin with ID: {} successfully logged in.", admin.getId());
-        return new ResponseEntity<>(convertToResponse(admin), HttpStatus.OK);
+        // Generate Token
+        String token = jwtUtil.generateToken(admin.getEmail(), "ADMIN", admin.getId());
+
+        // Add to response
+        TnPAdminResponse response = convertToResponse(admin);
+        response.setToken(token);
+
+        log.info("Admin successfully logged in. Token generated.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //Get all registered Admin

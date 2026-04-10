@@ -10,8 +10,4 @@ import java.util.List;
 @Repository
 public interface InternshipRepository extends JpaRepository<Internship, Integer> {
 
-    // We will add custom queries later, for example:
-    // List<Internship> findByCompany(String company);
-    // List<Internship> findByStatus(String status);
-
 }

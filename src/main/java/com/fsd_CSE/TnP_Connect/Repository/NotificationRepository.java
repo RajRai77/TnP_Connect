@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
-    // We can add filtering queries here later if performance becomes an issue
 }

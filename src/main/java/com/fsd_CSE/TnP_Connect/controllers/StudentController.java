@@ -1,5 +1,6 @@
 package com.fsd_CSE.TnP_Connect.controllers;
 import com.fsd_CSE.TnP_Connect.Response.Internship.InternshipApplicationSummary;
+import com.fsd_CSE.TnP_Connect.Response.LoginRequest;
 import com.fsd_CSE.TnP_Connect.Response.session.SessionRegistrationSummary;
 import com.fsd_CSE.TnP_Connect.Response.student.StudentFullDetailsResponse;
 import com.fsd_CSE.TnP_Connect.Response.student.StudentRequest;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
 public class StudentController {
 
 
+    @Autowired
+    private com.fsd_CSE.TnP_Connect.util.JwtUtil jwtUtil;
     @Autowired
     private StudentRepository studentRepository;
 
@@ -248,6 +251,30 @@ public class StudentController {
         response.setSessionRegistrations(regSummaries);
 
         return ResponseEntity.ok(response);
+    }
+
+    // Add this new endpoint:
+    @PostMapping("/login")
+    public ResponseEntity<StudentResponse> loginStudent(@org.springframework.web.bind.annotation.RequestBody LoginRequest request) {
+        log.info("Student login attempt for email: {}", request.getEmail());
+
+        Student student = studentRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+
+        String expectedPasswordHash = simpleHash(request.getPassword());
+        if (!expectedPasswordHash.equals(student.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
+
+        // Generate Token
+        String token = jwtUtil.generateToken(student.getEmail(), "STUDENT", student.getId());
+
+        // Add to response
+        StudentResponse response = convertToResponse(student);
+        response.setToken(token);
+
+        log.info("Student successfully logged in. Token generated.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //  12: Password Patch

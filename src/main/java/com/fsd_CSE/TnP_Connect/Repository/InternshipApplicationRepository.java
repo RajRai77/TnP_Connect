@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface InternshipApplicationRepository extends JpaRepository<InternshipApplication, Integer> {
-    // We can add custom queries here later if needed
+
     Optional<InternshipApplication> findByStudentIdAndInternshipId(Integer studentId, Integer internshipId);
 
 }
