@@ -28,6 +28,13 @@ public class TnPAdmin {
     private String role;
     private String designation;
 
+    @Column(name = "approval_status")
+    private String approvalStatus = "PENDING"; // Can be PENDING, APPROVED, or REJECTED
+
+    // Add Getter and Setter for this!
+    public String getApprovalStatus() { return approvalStatus; }
+    public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;

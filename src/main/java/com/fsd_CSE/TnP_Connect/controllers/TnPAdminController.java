@@ -26,6 +26,9 @@ public class TnPAdminController {
     private TnPAdminRepository tnpAdminRepository;
 
     @Autowired
+    private com.fsd_CSE.TnP_Connect.util.EmailService emailService;
+
+    @Autowired
     private com.fsd_CSE.TnP_Connect.util.JwtUtil jwtUtil;
     private static final Logger log = LoggerFactory.getLogger(TnPAdminController.class);
 
@@ -46,7 +49,7 @@ public class TnPAdminController {
         admin.setPasswordHash(simpleHash(adminRequest.getPasswordHash()));
 
         TnPAdmin savedAdmin = tnpAdminRepository.save(admin);
-        log.info("Registered new admin with ID: {}", savedAdmin.getId());
+        emailService.sendNewAdminRequestEmail(savedAdmin);
 
         return new ResponseEntity<>(convertToResponse(savedAdmin), HttpStatus.CREATED);
     }
@@ -59,6 +62,9 @@ public class TnPAdminController {
         TnPAdmin admin = tnpAdminRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
+        if (!"APPROVED".equals(admin.getApprovalStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account is pending Super Admin approval.");
+        }
         String expectedPasswordHash = simpleHash(request.getPassword());
         if (!expectedPasswordHash.equals(admin.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -73,6 +79,28 @@ public class TnPAdminController {
 
         log.info("Admin successfully logged in. Token generated.");
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //get all pending requests
+    @GetMapping("/pending-requests")
+    public ResponseEntity<List<TnPAdminResponse>> getPendingAdmins() {
+        List<TnPAdminResponse> pending = tnpAdminRepository.findAll().stream()
+                .filter(a -> "PENDING".equals(a.getApprovalStatus()))
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(pending);
+    }
+    // Approve an Admin
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<String> approveAdmin(@PathVariable Integer id) {
+        TnPAdmin admin = tnpAdminRepository.findById(id).orElseThrow();
+        admin.setApprovalStatus("APPROVED");
+        tnpAdminRepository.save(admin);
+
+        // Send email to the applicant
+        emailService.sendApprovalEmail(admin);
+
+        return ResponseEntity.ok("Admin Approved Successfully. Email sent to applicant.");
     }
 
     //Get all registered Admin
